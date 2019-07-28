@@ -1,4 +1,4 @@
-package io.strimzi;
+package io.strimzi.streams;
 
 import java.util.Map;
 
