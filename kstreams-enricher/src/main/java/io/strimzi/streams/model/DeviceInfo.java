@@ -7,6 +7,10 @@ public class DeviceInfo {
 
     public String deviceId;
     public String manufacturer;
+
+    public DeviceInfo() {
+        
+    }
     
     public DeviceInfo(String deviceId, String manufacturer) {
         this.deviceId = deviceId;
