@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import io.strimzi.streams.model.DeviceTelemetry;
 import io.strimzi.streams.serde.JsonSerializer;
-import io.strimzi.streams.serde.DeviceTelemetrySerde;
 import io.strimzi.streams.serde.JsonDeserializer;
 
 public final class KStreamsEnricher {
