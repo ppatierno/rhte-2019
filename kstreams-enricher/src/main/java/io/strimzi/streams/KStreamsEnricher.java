@@ -38,14 +38,17 @@ public final class KStreamsEnricher {
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, config.getApplicationId());
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
         
+        // Serdes for the device telemetry message payload
         Serde<DeviceTelemetry> deviceTelemetrySerdes = 
             Serdes.serdeFrom(new JsonSerializer<DeviceTelemetry>(), new JsonDeserializer<>(DeviceTelemetry.class));
         
-        Serde<String> stringKeySerdes = new ChangeEventAwareJsonSerde<>(String.class);
-        stringKeySerdes.configure(Collections.emptyMap(), true);
+        // Serdes for the deviceinfo message key (the device id) coming through CDC via Debezium
+        Serde<String> stringCdcKeySerdes = new ChangeEventAwareJsonSerde<>(String.class);
+        stringCdcKeySerdes.configure(Collections.emptyMap(), true);
 
-        Serde<DeviceInfo> deviceInfoSerdes = new ChangeEventAwareJsonSerde<>(DeviceInfo.class);
-        deviceInfoSerdes.configure(Collections.emptyMap(), false);
+        // Serdes for the deviceinfo message payload coming through CDC via Debezium
+        Serde<DeviceInfo> deviceInfoCdcSerdes = new ChangeEventAwareJsonSerde<>(DeviceInfo.class);
+        deviceInfoCdcSerdes.configure(Collections.emptyMap(), false);
         
         StreamsBuilder builder = new StreamsBuilder();
 
@@ -53,7 +56,7 @@ public final class KStreamsEnricher {
             builder.stream("device-telemetry", Consumed.with(Serdes.String(), deviceTelemetrySerdes));
 
         KTable<String, DeviceInfo> deviceInfo = 
-            builder.table("dbserver1.devices.deviceinfo", Consumed.with(stringKeySerdes, deviceInfoSerdes));
+            builder.table("dbserver1.devices.deviceinfo", Consumed.with(stringCdcKeySerdes, deviceInfoCdcSerdes));
 
         deviceTelemetry.join(deviceInfo, (telemetry, info) -> {
             log.info("info = {}, telemetry = {}", info, telemetry);

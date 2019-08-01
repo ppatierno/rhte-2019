@@ -21,7 +21,7 @@ public class DeviceTelemetry {
     public String toString() {
         return "DeviceTelemetry(" +
                 "deviceId = " + this.deviceId +
-                ",temperature = " + this.temperature +
+                ", temperature = " + this.temperature +
                 ")";
     }
 }
