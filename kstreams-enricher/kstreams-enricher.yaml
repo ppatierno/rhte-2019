@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kstreams-enricher
+  name: kstreams-enricher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kstreams-enricher
+  template:
+    metadata:
+      labels:
+        app: kstreams-enricher
+    spec:
+      containers:
+      - name: kstreams-enricher
+        image: ppatierno/rhte-kstreams-enricher:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: APPLICATION_ID
+            value: kstreams-enricher
+          - name: BOOTSTRAP_SERVERS
+            value: my-cluster-kafka-bootstrap:9092
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
