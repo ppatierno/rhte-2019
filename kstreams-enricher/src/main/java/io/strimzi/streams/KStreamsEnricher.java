@@ -1,5 +1,6 @@
 package io.strimzi.streams;
 
+import java.util.Collections;
 import java.util.Properties;
 
 import org.apache.kafka.common.serialization.Serde;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import io.strimzi.streams.model.DeviceInfo;
 import io.strimzi.streams.model.DeviceTelemetry;
 import io.strimzi.streams.serde.JsonSerializer;
+import io.strimzi.streams.serde.ChangeEventAwareJsonSerde;
 import io.strimzi.streams.serde.JsonDeserializer;
 
 public final class KStreamsEnricher {
@@ -35,12 +37,15 @@ public final class KStreamsEnricher {
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, config.getApplicationId());
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
-
+        
         Serde<DeviceTelemetry> deviceTelemetrySerdes = 
             Serdes.serdeFrom(new JsonSerializer<DeviceTelemetry>(), new JsonDeserializer<>(DeviceTelemetry.class));
         
-        Serde<DeviceInfo> deviceInfoSerdes =
-            Serdes.serdeFrom(new JsonSerializer<DeviceInfo>(), new JsonDeserializer<DeviceInfo>(DeviceInfo.class));
+        Serde<String> stringKeySerdes = new ChangeEventAwareJsonSerde<>(String.class);
+        stringKeySerdes.configure(Collections.emptyMap(), true);
+
+        Serde<DeviceInfo> deviceInfoSerdes = new ChangeEventAwareJsonSerde<>(DeviceInfo.class);
+        deviceInfoSerdes.configure(Collections.emptyMap(), false);
         
         StreamsBuilder builder = new StreamsBuilder();
 
@@ -48,7 +53,7 @@ public final class KStreamsEnricher {
             builder.stream("device-telemetry", Consumed.with(Serdes.String(), deviceTelemetrySerdes));
 
         KTable<String, DeviceInfo> deviceInfo = 
-            builder.table("device-info", Consumed.with(Serdes.String(), deviceInfoSerdes));
+            builder.table("dbserver1.devices.deviceinfo", Consumed.with(stringKeySerdes, deviceInfoSerdes));
 
         deviceTelemetry.join(deviceInfo, (telemetry, info) -> {
             log.info("info = {}, telemetry = {}", info, telemetry);

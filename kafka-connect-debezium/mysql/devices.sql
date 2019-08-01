@@ -17,7 +17,7 @@ USE devices;
 
 # Create and populate our products using a single insert with many rows
 CREATE TABLE deviceinfo (
-  deviceid VARCHAR(255) NOT NULL PRIMARY KEY,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   manufacturer VARCHAR(255) NOT NULL
 );
 

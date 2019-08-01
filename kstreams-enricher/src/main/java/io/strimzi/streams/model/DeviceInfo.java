@@ -5,22 +5,22 @@ package io.strimzi.streams.model;
  */
 public class DeviceInfo {
 
-    public String deviceId;
+    public String id;
     public String manufacturer;
 
     public DeviceInfo() {
         
     }
     
-    public DeviceInfo(String deviceId, String manufacturer) {
-        this.deviceId = deviceId;
+    public DeviceInfo(String id, String manufacturer) {
+        this.id = id;
         this.manufacturer = manufacturer;
     }
 
     @Override
     public String toString() {
         return "DeviceInfo(" +
-                "deviceId = " + this.deviceId +
+                "id = " + this.id +
                 ",manufacturer = " + this.manufacturer +
                 ")";
     }
