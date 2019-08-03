@@ -93,6 +93,8 @@ oc exec my-cluster-kafka-0 -- /opt/kafka/bin/kafka-console-consumer.sh \
     --topic dbserver1.devices.deviceinfo
 ```
 
+## Making new CDC events
+
 In another terminal, make a change to the `deviceinfo` table in the `devices` database of the MySQL instance, adding a new device.
 
 ```shell
