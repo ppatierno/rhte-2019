@@ -24,7 +24,7 @@ It is used for adding the Debezium MySQL plugin connector.
 First, deploy the Apache Kafka Connect cluster.
 
 ```shell
-TBD: adding a kafka-connect-s2i.yaml to this repo
+oc apply -f kafka-connect-debezium/kafka-connect-s2i.yaml
 ```
 
 ## Build a new Apache Kafka Connect image with MySQL Debezium connector plugin

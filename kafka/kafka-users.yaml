@@ -1,0 +1,127 @@
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaUser
+metadata:
+  name: kafka-connect-debezium
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      - resource:
+          type: topic
+          name: dbserver1.devices.deviceinfo
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: dbserver1.devices.deviceinfo
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: dbserver1.devices.deviceinfo
+          patternType: literal
+        operation: Describe
+        host: "*"
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaUser
+metadata:
+  name: kstreams-enricher
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # rights for reading from the dbserver1.devices.deviceinfo topic
+      - resource:
+          type: topic
+          name: dbserver1.devices.deviceinfo
+          patternType: literal
+        operation: Read
+        host: "*"
+      - resource:
+          type: topic
+          name: dbserver1.devices.deviceinfo
+          patternType: literal
+        operation: Describe
+        host: "*"
+      # rights for reading from the device-telemetry topic
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Read
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Describe
+        host: "*"
+      # rights for joining the kstreams-enricher consumer group (Kafka Streams application-id parameter)
+      - resource:
+          type: group
+          name: kstreams-enricher
+          patternType: literal
+        operation: Read
+        host: "*"
+      # right for writing to the device-telemetry-enriched topic
+      - resource:
+          type: topic
+          name: device-telemetry-enriched
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry-enriched
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry-enriched
+          patternType: literal
+        operation: Describe
+        host: "*"
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaUser
+metadata:
+  name: kafka-http-bridge
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # right for writing to the device-telemetry topic
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Describe
+        host: "*"
