@@ -23,6 +23,13 @@ spec:
             value: kstreams-enricher
           - name: BOOTSTRAP_SERVERS
             value: my-cluster-kafka-bootstrap:9092
+          - name: USERNAME
+            value: kstreams-enricher
+          - name: PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: kstreams-enricher
+                key: password
         resources:
           limits:
             memory: "512Mi"

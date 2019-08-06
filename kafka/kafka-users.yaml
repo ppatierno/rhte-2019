@@ -154,7 +154,7 @@ spec:
       - resource:
           type: group
           name: kstreams-enricher
-          patternType: literal
+          patternType: prefix
         operation: Read
         host: "*"
       # right for writing to the device-telemetry-enriched topic
@@ -176,6 +176,27 @@ spec:
           patternType: literal
         operation: Describe
         host: "*"
+      # rights for reading and writing on the internal created topics
+      - resource:
+          type: topic
+          name: kstreams-enricher
+          patternType: prefix
+        operation: Write
+      - resource:
+          type: topic
+          name: kstreams-enricher
+          patternType: prefix
+        operation: Create
+      - resource:
+          type: topic
+          name: kstreams-enricher
+          patternType: prefix
+        operation: Read
+      - resource:
+          type: topic
+          name: kstreams-enricher
+          patternType: prefix
+        operation: Describe
 ---
 apiVersion: kafka.strimzi.io/v1beta1
 kind: KafkaUser
@@ -240,4 +261,36 @@ spec:
           name: kafka-console-consumer
           patternType: literal
         operation: Read
+        host: "*"
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaUser
+metadata:
+  name: kafka-console-producer
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # rights for writing to the device-telemetry topic
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Describe
         host: "*"

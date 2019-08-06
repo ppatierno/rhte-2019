@@ -37,6 +37,12 @@ public final class KStreamsEnricher {
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, config.getApplicationId());
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
+
+        if (config.getUsername() != null && config.getPassword() != null) {
+            props.put("sasl.mechanism","SCRAM-SHA-512");
+            props.put("sasl.jaas.config", "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"" + config.getUsername() + "\" password=\"" + config.getPassword() + "\";");
+            props.put("security.protocol","SASL_PLAINTEXT");
+        }
         
         // Serdes for the device telemetry message payload
         Serde<DeviceTelemetry> deviceTelemetrySerdes = 
