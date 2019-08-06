@@ -1,8 +1,57 @@
 # Module 01 - Running Apache Kafka on OpenShift
 
-## Apache Kafka cluster deployment
+## Cluster Operator deployment
+
+Deploying an Apache Kafka cluster is made really simple using the Cluster Operator.
+The Cluster Operator can be installed in many different ways:
+
+* Using the Operator Hub with OpenShift 4.x which provides the OLM (Operator Lifecycle Manager) to simplify the operators installation.
+* Installing the OLM first (on OpenShift 3.11) and then the Cluster Operator. If using Strimzi, it's possible through the [OperatorHub.io](https://operatorhub.io/) website. The user installing the OLM needs admin right to do so.
+* Just downloading the released files and installing manually all the CRDs and the Cluster Operator (in this case the user doing that has to have admin rights).
+
+### Operator Hub on OpenShift 4.x
 
 TBD
+
+### OperatorHub.io website
+
+The OperatorHub.io website provides the latest version of the Strimzi project providing the Cluster Operator.
+Because the process involves the OLM installation, it's useful for OpenShift 3.11 where the Operator Hub is not already available.
+First of all, install the OLM (the user has to have adming rights to do so).
+
+```shell
+curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.0/install.sh | bash -s 0.10.0
+```
+
+The OLM will be installed and running in the `olm` namespace.
+
+After that, install the Cluster Operator running the following command.
+
+```shell
+oc apply -f https://operatorhub.io/install/strimzi-kafka-operator.yaml
+```
+
+The operator will be installed in the `operators` namespace and will be able to watch for `Kafka` resources in all the namespaces of the cluster.
+
+### Manual installation
+
+Download the latest release of the Strimzi project.
+From the extracted folder, run the following command (with a user having admin rights).
+
+```shell
+oc apply -f install/cluster-operator
+```
+
+The operator will be running in the working namespace.
+
+## Apache Kafka cluster deployment
+
+The Cluster Operator is able to watch `Kafka` resources describing an Apache Kafka cluster.
+In order to deploy the Apache Kafka cluster, just create the `Kafka` resource provided with the following command.
+
+```shell
+oc apply -f kafka/kafka-cluster.yaml
+```
 
 ## Topics creation
 
