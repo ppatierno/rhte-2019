@@ -53,6 +53,19 @@ In order to deploy the Apache Kafka cluster, just create the `Kafka` resource pr
 oc apply -f kafka/kafka-cluster.yaml
 ```
 
+The main points on this cluser are:
+
+* The Kafka cluster is made by 3 brokers (see `spec.kafka.replicas`)
+* There are two listeners, a "plain" (`spec.kafka.listeners.plain`) one listening on port 9092 and "tls" (`spec.kafka.listeners.tls`) one on port 9093
+* Authentication is enabled on both "plain" and "tls". It uses SCRAM-SHA-512 mechanism.
+* Authorization is enabled on the Kafka cluster. It uses the "simple" mechanism (see `spec.kafka.authorization`)
+* The Kafka brokers have some common configuration via `spec.kafka.config`
+* The Kafka brokers uses JBOD for persistent storage with one disk (see `spec.kafka.storage`)
+* The Kafka brokers export metrics through JMX exporter configured via `spec.kafka.metrics`
+* The Zookeeper ensamble is made by 3 nodes (see `spec.zookeeper.replicas`)
+* The Zookeeper ensamble uses persistent storage as well (see `spec.zookeeper.storage`)
+* The Zookeeper nodes export metrics through JMX exporter configured via `spec.zookeeper.metrics`
+
 ## Topics creation
 
 The scenario needs three topics to work.
