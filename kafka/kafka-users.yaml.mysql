@@ -110,6 +110,39 @@ spec:
           name: connect-cluster
           patternType: literal
         operation: Read
+        host: "*"
+      # ADDITIONAL RIGHTS RELATED TO USE THE DEBEZIUM MYSQL CONNECTOR
+      # rights to read and write on the "schema-changes.devices" for database history
+      - resource:
+          type: topic
+          name: schema-changes.devices
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: schema-changes.devices
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: schema-changes.devices
+          patternType: literal
+        operation: Describe
+        host: "*"
+      - resource:
+          type: topic
+          name: schema-changes.devices
+          patternType: literal
+        operation: Read
+        host: "*"
+      # joining "database-history-group" for the above topics
+      - resource:
+          type: group
+          name: database-history-group
+          patternType: literal
+        operation: Read
         host: "*"    
 ---
 apiVersion: kafka.strimzi.io/v1beta1
