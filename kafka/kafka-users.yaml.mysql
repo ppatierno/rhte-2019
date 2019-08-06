@@ -1,0 +1,329 @@
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaUser
+metadata:
+  name: kafka-connect-debezium
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # rights to write on the "dbserver1.devices.deviceinfo" the CDC events
+      - resource:
+          type: topic
+          name: dbserver1.devices.deviceinfo
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: dbserver1.devices.deviceinfo
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: dbserver1.devices.deviceinfo
+          patternType: literal
+        operation: Describe
+        host: "*"
+      # rights on the "offset.storage.topic" by default "connect-cluster-offsets"
+      - resource:
+          type: topic
+          name: connect-cluster-offsets
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: connect-cluster-offsets
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: connect-cluster-offsets
+          patternType: literal
+        operation: Describe
+        host: "*"
+      - resource:
+          type: topic
+          name: connect-cluster-offsets
+          patternType: literal
+        operation: Read
+        host: "*"
+      # rights on the "status.storage.topic" by default "connect-cluster-status"
+      - resource:
+          type: topic
+          name: connect-cluster-status
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: connect-cluster-status
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: connect-cluster-status
+          patternType: literal
+        operation: Describe
+        host: "*"
+      - resource:
+          type: topic
+          name: connect-cluster-status
+          patternType: literal
+        operation: Read
+        host: "*"
+      # rights on the "config.storage.topic " by default "connect-cluster-configs"
+      - resource:
+          type: topic
+          name: connect-cluster-configs
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: connect-cluster-configs
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: connect-cluster-configs
+          patternType: literal
+        operation: Describe
+        host: "*"
+      - resource:
+          type: topic
+          name: connect-cluster-configs
+          patternType: literal
+        operation: Read
+        host: "*"
+      # joining "group.id" by default "connect-cluster" for the above topics
+      - resource:
+          type: group
+          name: connect-cluster
+          patternType: literal
+        operation: Read
+        host: "*"
+      # ADDITIONAL RIGHTS RELATED TO USE THE DEBEZIUM MYSQL CONNECTOR
+      # rights to read and write on the "schema-changes.devices" for database history
+      - resource:
+          type: topic
+          name: schema-changes.devices
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: schema-changes.devices
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: schema-changes.devices
+          patternType: literal
+        operation: Describe
+        host: "*"
+      - resource:
+          type: topic
+          name: schema-changes.devices
+          patternType: literal
+        operation: Read
+        host: "*"
+      # joining "database-history-group" for the above topics
+      - resource:
+          type: group
+          name: database-history-group
+          patternType: literal
+        operation: Read
+        host: "*"    
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaUser
+metadata:
+  name: kstreams-enricher
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # rights for reading from the dbserver1.devices.deviceinfo topic
+      - resource:
+          type: topic
+          name: dbserver1.devices.deviceinfo
+          patternType: literal
+        operation: Read
+        host: "*"
+      - resource:
+          type: topic
+          name: dbserver1.devices.deviceinfo
+          patternType: literal
+        operation: Describe
+        host: "*"
+      # rights for reading from the device-telemetry topic
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Read
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Describe
+        host: "*"
+      # rights for joining the kstreams-enricher consumer group (Kafka Streams application-id parameter)
+      - resource:
+          type: group
+          name: kstreams-enricher
+          patternType: prefix
+        operation: Read
+        host: "*"
+      # right for writing to the device-telemetry-enriched topic
+      - resource:
+          type: topic
+          name: device-telemetry-enriched
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry-enriched
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry-enriched
+          patternType: literal
+        operation: Describe
+        host: "*"
+      # rights for reading and writing on the internal created topics
+      - resource:
+          type: topic
+          name: kstreams-enricher
+          patternType: prefix
+        operation: Write
+      - resource:
+          type: topic
+          name: kstreams-enricher
+          patternType: prefix
+        operation: Create
+      - resource:
+          type: topic
+          name: kstreams-enricher
+          patternType: prefix
+        operation: Read
+      - resource:
+          type: topic
+          name: kstreams-enricher
+          patternType: prefix
+        operation: Describe
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaUser
+metadata:
+  name: kafka-http-bridge
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # right for writing to the device-telemetry topic
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Describe
+        host: "*"
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaUser
+metadata:
+  name: kafka-console-consumer
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # rights for reading from the dbserver1.devices.deviceinfo topic
+      - resource:
+          type: topic
+          name: dbserver1.devices.deviceinfo
+          patternType: literal
+        operation: Read
+        host: "*"
+      - resource:
+          type: topic
+          name: dbserver1.devices.deviceinfo
+          patternType: literal
+        operation: Describe
+        host: "*"
+      # rights for joining the kafka-console-consumer consumer group
+      - resource:
+          type: group
+          name: kafka-console-consumer
+          patternType: literal
+        operation: Read
+        host: "*"
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaUser
+metadata:
+  name: kafka-console-producer
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # rights for writing to the device-telemetry topic
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Create
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Write
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry
+          patternType: literal
+        operation: Describe
+        host: "*"

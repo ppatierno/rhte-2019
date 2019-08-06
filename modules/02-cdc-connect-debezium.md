@@ -1,17 +1,18 @@
 # Module 02 - CDC with Apache Kafka Connect and Debezium
 
-## Deploy and check MySQL database
+## Deploy and check PostgreSQL database
 
-Deploy the MySQL database used as storage for devices information with some pre-crated data.
+Deploy the PostgreSQL database used as storage for devices information with some pre-crated data.
 
 ```shell
-oc apply -f kafka-connect-debezium/mysql/mysql.yaml
+oc adm policy add-scc-to-user anyuid -z postgres
+oc apply -f kafka-connect-debezium/postgres/postgres.yaml
 ```
 
 Check that the table `deviceinfo` is prepopulated with some devices related information.
 
 ```shell
-oc exec $(oc get pods --selector=app=mysql -o=jsonpath='{.items[0].metadata.name}') -- mysql -u mysqluser -pmysqlpw -e "SELECT * from deviceinfo" devices
+oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "SELECT * FROM deviceinfo;"
 ```
 
 ## Deploy Apache Kafka Connect
@@ -19,23 +20,23 @@ oc exec $(oc get pods --selector=app=mysql -o=jsonpath='{.items[0].metadata.name
 The Apache Kafka Connect cluster can be deployed using the cluster operator.
 There are two available CRDs (Custom Resource Definitions) for that: `KafkaConnect` and `KafkaConnectS2I`.
 The `KafkaConnectS2I` CRD leverages the Source-2-Image OpenShift's feature for handling builds and adding connectors plugin.
-It is used for adding the Debezium MySQL plugin connector.
+It is used for adding the Debezium PostgreSQL plugin connector.
 
 First, deploy the Apache Kafka Connect cluster.
 
 ```shell
-TBD: adding a kafka-connect-s2i.yaml to this repo
+oc apply -f kafka-connect-debezium/kafka-connect-s2i.yaml
 ```
 
-## Build a new Apache Kafka Connect image with MySQL Debezium connector plugin
+## Build a new Apache Kafka Connect image with Debezium PostgreSQL connector plugin
 
-Download the latest available Debezium MySQL connector plugin and start a new S2I build providing such a plugin.
+Download the latest available Debezium PostgreSQL connector plugin and start a new S2I build providing such a plugin.
 A new Kafka Connect image is built adding the plugin and it's restarted.
 
 ```shell
 export DEBEZIUM_VERSION=0.9.5.Final
 mkdir -p plugins && cd plugins && \
-curl http://central.maven.org/maven2/io/debezium/debezium-connector-mysql/$DEBEZIUM_VERSION/debezium-connector-mysql-$DEBEZIUM_VERSION-plugin.tar.gz | tar xz && \
+curl http://central.maven.org/maven2/io/debezium/debezium-connector-postgres/$DEBEZIUM_VERSION/debezium-connector-postgres-$DEBEZIUM_VERSION-plugin.tar.gz | tar xz && \
 oc start-build my-connect-cluster-connect --from-dir=. --follow && \
 cd .. && rm -rf plugins
 ```
@@ -47,9 +48,9 @@ Interact againt the Apache Kafka Connect REST API (from one of the pods running 
 oc exec my-cluster-kafka-0 -c kafka -- curl -s http://my-connect-cluster-connect-api:8083/connector-plugins
 ```
 
-## Run the Debezium MySQL connector
+## Run the Debezium PostgreSQL connector
 
-Register the Debezium MySQL connector with the related configuration to run against the deployed MySQL instance:
+Register the Debezium PostgreSQL connector with the related configuration to run against the deployed PostgreSQL instance:
 
 ```shell
 oc exec -i -c kafka my-cluster-kafka-0 -- curl -X POST \
@@ -58,20 +59,17 @@ oc exec -i -c kafka my-cluster-kafka-0 -- curl -X POST \
     http://my-connect-cluster-connect-api:8083/connectors -d @- <<'EOF'
 
 {
-    "name": "devices-connector",
-    "config": {
-        "connector.class": "io.debezium.connector.mysql.MySqlConnector",
-        "tasks.max": "1",
-        "database.hostname": "mysql",
-        "database.port": "3306",
-        "database.user": "debezium",
-        "database.password": "dbz",
-        "database.server.id": "184054",
-        "database.server.name": "dbserver1",
-        "database.whitelist": "devices",
-        "database.history.kafka.bootstrap.servers": "my-cluster-kafka-bootstrap:9092",
-        "database.history.kafka.topic": "schema-changes.devices"
-    }
+  "name": "devices-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "postgres",
+    "database.password": "postgres",
+    "database.dbname" : "postgres",
+    "database.server.name": "dbserver1",
+    "table.whitelist": "devices.deviceinfo"
+  }
 }
 EOF
 ```
@@ -82,30 +80,35 @@ Check that the connector is now loaded.
 oc exec my-cluster-kafka-0 -c kafka -- curl -X GET -H "Accept:application/json" http://my-connect-cluster-connect-api:8083/connectors
 ```
 
-Check that the connector is running and it already read the propulated data in the `deviceinfo` table of the `devices` database from the MySQL instance, sending related events to the `dbserver1.devices.deviceinfo` topic.
+Check that the connector is running and it already read the propulated data in the `deviceinfo` table of the `devices` database from the PostgreSQL instance, sending related events to the `dbserver1.devices.deviceinfo` topic.
 Run an Apache Kafka console consumer on one of the pods for receiving messages from the topic from the beginning offset.
 
 ```shell
+export CONSOLE_CONSUMER_PASSWORD=$(oc get secret kafka-console-consumer -o jsonpath='{.data.password}' | base64 -d)
 oc exec my-cluster-kafka-0 -- /opt/kafka/bin/kafka-console-consumer.sh \
-    --bootstrap-server localhost:9092 \
+    --bootstrap-server my-cluster-kafka-bootstrap:9092 \
     --from-beginning \
     --property print.key=true \
-    --topic dbserver1.devices.deviceinfo
+    --topic dbserver1.devices.deviceinfo \
+    --consumer-property sasl.mechanism=SCRAM-SHA-512 \
+    --consumer-property security.protocol=SASL_PLAINTEXT \
+    --consumer-property sasl.jaas.config="org.apache.kafka.common.security.scram.ScramLoginModule required username=\"kafka-console-consumer\" password=\"${CONSOLE_CONSUMER_PASSWORD}\";" \
+    --group kafka-console-consumer
 ```
 
 ## Making new CDC events
 
-In another terminal, make a change to the `deviceinfo` table in the `devices` database of the MySQL instance, adding a new device.
+In another terminal, make a change to the `deviceinfo` table in the `devices` database of the PostgreSQL instance, adding a new device.
 
 ```shell
-oc exec $(oc get pods --selector=app=mysql -o=jsonpath='{.items[0].metadata.name}') -- mysql -u mysqluser -pmysqlpw -e "INSERT INTO deviceinfo VALUES(\"3\",\"manufacturer-C\")" devices
+oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "INSERT INTO deviceinfo VALUES('3', 'manufacturer-C')"
 ```
 
-A new event is genareted by the Debezium MySQL connector and the consumer gets the message.
+A new event is genareted by the Debezium PostgreSQL connector and the consumer gets the message.
 
 Delete the just created record from the table.
 The connector generates a new message with `null` as payload which represents the tombstone for deleted record so deleting message with same key in a compacted topic.
 
 ```shell
-oc exec $(oc get pods --selector=app=mysql -o=jsonpath='{.items[0].metadata.name}') -- mysql -u mysqluser -pmysqlpw -e "DELETE FROM deviceinfo WHERE id=\"3\"" devices
+oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "DELETE FROM deviceinfo WHERE id='3';"
 ```
