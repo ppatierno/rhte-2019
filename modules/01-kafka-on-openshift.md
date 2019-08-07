@@ -118,7 +118,7 @@ This file contains all the neccessary resources which are needed to deploy opera
 
 Prometheus Operator is deployed by
 ```shell
-oc apply -f metrics/prometheus/prometheus-operator.yaml
+oc apply -f metrics/prometheus-operator.yaml
 ```
 
 ### Deploying Prometheus and Alertmanager
@@ -169,9 +169,9 @@ Then we can create Kafka dashboard which is receiving data from created datasour
 curl --user admin:admin -X POST 'http://'$(oc get svc grafana -o=jsonpath='{.spec.clusterIP}')':3000/api/dashboards/import' -d @metrics/grafana/strimzi-kafka.json --header "Content-Type: application/json"
 ```
 
-Similary we can create a Kafka Connect dashboard
+Similary we can create a Kafka Connect S2I dashboard
 ```shell
-curl --user admin:admin -X POST 'http://'$(oc get svc grafana -o=jsonpath='{.spec.clusterIP}')':3000/api/dashboards/import' -d @metrics/grafana/strimzi-kafka-connect.json --header "Content-Type: application/json"
+curl --user admin:admin -X POST 'http://'$(oc get svc grafana -o=jsonpath='{.spec.clusterIP}')':3000/api/dashboards/import' -d @metrics/grafana/strimzi-kafka-connect-s2i.json --header "Content-Type: application/json"
 ```
 
 and Zookeeper dashboard

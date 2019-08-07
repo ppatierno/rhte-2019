@@ -51,7 +51,7 @@ kind: Prometheus
 metadata:
   name: prometheus
 spec:
-  replicas: 2
+  replicas: 1
   serviceAccountName: prometheus-server
   serviceMonitorSelector:
     matchLabels:

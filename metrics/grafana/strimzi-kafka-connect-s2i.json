@@ -111,7 +111,7 @@
         "tableColumn": "",
         "targets": [
           {
-            "expr": "kafka_connect_connect_worker_metrics_connector_count{strimzi_io_kind=\"KafkaConnect\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"}",
+            "expr": "kafka_connect_connect_worker_metrics_connector_count{strimzi_io_kind=\"KafkaConnectS2I\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"}",
             "format": "time_series",
             "intervalFactor": 2,
             "refId": "A",
@@ -193,7 +193,7 @@
         "tableColumn": "",
         "targets": [
           {
-            "expr": "kafka_connect_connect_worker_metrics_task_count{strimzi_io_kind=\"KafkaConnect\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"}",
+            "expr": "kafka_connect_connect_worker_metrics_task_count{strimzi_io_kind=\"KafkaConnectS2I\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"}",
             "format": "time_series",
             "intervalFactor": 2,
             "refId": "A",
@@ -251,7 +251,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "sum(kafka_connect_connect_metrics_connect_1_incoming_byte_rate{strimzi_io_kind=\"KafkaConnect\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"})",
+            "expr": "sum(kafka_connect_connect_metrics_connect_1_incoming_byte_rate{strimzi_io_kind=\"KafkaConnectS2I\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"})",
             "format": "time_series",
             "hide": false,
             "intervalFactor": 2,
@@ -339,7 +339,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "sum(kafka_connect_connect_metrics_connect_1_outgoing_byte_rate{strimzi_io_kind=\"KafkaConnect\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"})",
+            "expr": "sum(kafka_connect_connect_metrics_connect_1_outgoing_byte_rate{strimzi_io_kind=\"KafkaConnectS2I\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"})",
             "format": "time_series",
             "hide": false,
             "intervalFactor": 2,
@@ -427,7 +427,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "rate(process_cpu_seconds_total{strimzi_io_kind=\"KafkaConnect\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"}[1m])",
+            "expr": "rate(process_cpu_seconds_total{strimzi_io_kind=\"KafkaConnectS2I\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"}[1m])",
             "format": "time_series",
             "hide": false,
             "intervalFactor": 2,
@@ -515,7 +515,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "sum without(area)(jvm_memory_bytes_used{strimzi_io_kind=\"KafkaConnect\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"})",
+            "expr": "sum without(area)(jvm_memory_bytes_used{strimzi_io_kind=\"KafkaConnectS2I\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"})",
             "format": "time_series",
             "hide": false,
             "intervalFactor": 2,
@@ -603,7 +603,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "sum without(gc)(rate(jvm_gc_collection_seconds_sum{strimzi_io_kind=\"KafkaConnect\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"}[5m]))",
+            "expr": "sum without(gc)(rate(jvm_gc_collection_seconds_sum{strimzi_io_kind=\"KafkaConnectS2I\",strimzi_io_cluster=\"$strimzi_connect_cluster_name\"}[5m]))",
             "format": "time_series",
             "hide": false,
             "intervalFactor": 2,
@@ -739,8 +739,8 @@
     },
     "timezone": "",
 
-    "title": "Strimzi Kafka Connect",
-    "uid": "rpITwc0mz",
+    "title": "Strimzi Kafka Connect S2I",
+    "uid": "rpITwc0mi",
     "version": 6
   }
 }
