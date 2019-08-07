@@ -107,74 +107,92 @@ This operator allows us to easily deploy another segment - Prometheus server. Wi
 Grafana is a graphical tool which displays selected metrics very easily.
 
 ### Deploying Prometheus Operator
-To deploy Prometheus Operator we can use single file. 
 
-This file contains all the neccessary resources which are needed to deploy operator:
-- ClusterRole - permissions to manipulate with resources
-- ClusterRoleBinding - binding between CLusterRole and ServiceAccount
-- Deployment - specification of the Prometheus Operator deployment
-- ServiceAccount
-- Service
+To deploy Prometheus Operator we can use a single bundle file. 
 
-Prometheus Operator is deployed by
+This bundle contains all the neccessary resources which are needed to deploy the operator:
+
+* ClusterRole - permissions to manipulate with resources
+* ClusterRoleBinding - binding between ClusterRole and ServiceAccount
+* Deployment - specification of the Prometheus Operator deployment
+* ServiceAccount - used by the Prometheus Operator to run
+* Service - to expose the Prometheus Operator in the cluster
+
+Deploy the operator by running the following command.
+
 ```shell
 oc apply -f metrics/prometheus-operator.yaml
 ```
 
 ### Deploying Prometheus and Alertmanager
-When the Prometheus Operator is deployed, you can send a `Prometheus` and `Alertmanager` resource to the OpenShift server API and Prometheus Operator should deploy desired number of Prometheus and Alertmanager servers.
 
-Before we do that, we need to prepare a `Secret`s resources which are used by servers. These `Secret`s contain additional configuration for Prometheus and Alertmanager servers.
+When the Prometheus Operator is running, you can create `Prometheus` and `Alertmanager` resources and the Prometheus Operator will take care of them for deploying the Prometheus and Alertmanager servers.
+
+Before doing that, we need to prepare a `Secret`s resources which are used by servers.
+These `Secret`s contain additional configuration for Prometheus and Alertmanager servers.
 
 ```shell
 oc create secret generic additional-scrape-configs --from-file=metrics/prometheus/additional-properties/prometheus-additional.yaml
 oc create secret generic alertmanager-alertmanager --from-file=alertmanager.yaml=metrics/prometheus/alertmanager-config/alert-manager-config.yaml
 ```
 
-Now we can apply all files from Prometheus `install` folder.
+Apply all files from Prometheus `install` folder.
+
 ```shell
 oc apply -f metrics/prometheus/install
 ```
-NOTE: If you use another namespace than `myproject` you have to adjust a namespace. You can use this command:
+
+NOTE: If you use another namespace than `myproject` you have to adjust it accordingly running this command:
 ```shell
 sed -i 's/namespace: .*/namespace: your-namespace/' metrics/prometheus-operator.yaml
 ```
 
 By this, these files are applied:
-- alert-manager.yaml - specificaion of the `Alertmanager` resource and the `Service` which is pulling alerts from the Prometheus server
-- prometheus.yaml - specification of the `Prometheus` resource including a RBAC resources
-- prometheus-rules.yaml - specification of the `PrometheusRule`. These are conditions which when violated, an alert is fired
-- strimzi-service-monitor.yaml - specification of the `ServiceMonitor` resource where are described jobs for scrapping a metrics
 
-Now the Prometheus and Alertmanager pods should be created.
+* alert-manager.yaml - specificaion of the `Alertmanager` resource and the `Service` which is pulling alerts from the Prometheus server
+* prometheus.yaml - specification of the `Prometheus` resource including a RBAC resources
+* prometheus-rules.yaml - specification of the `PrometheusRule`. These are conditions which when violated, an alert is fired
+* strimzi-service-monitor.yaml - specification of the `ServiceMonitor` resource where are described jobs for scraping metrics
+
+Finally, Prometheus and Alertmanager servers are now running.
 
 ### Deploying Grafana
-Now we will deploy the last segment of the chain. Grafana is deployed by applying `Deployment` resource. 
+
+The last deployment is about Grafana for visualizing metrics scraped by Prometheus.
 
 ```shell
 oc apply -f metrics/grafana/grafana.yaml
 ```
 
-## Setting up the Grafana server
-You can set Graphana in UI or by using its API. We will for use an API way for the sake of this workshop simplicity.
-As first step we need to create a datasource. 
+In order to reach the Grafana Web UI or interacting with the related API from outside the cluster, we have to expose the related service using a route.
 
 ```shell
-curl --user admin:admin 'http://'$(oc get svc grafana -o=jsonpath='{.spec.clusterIP}')':3000/api/datasources' -X POST -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"name":"Prometheus","isDefault":true ,"type":"prometheus","url":"http://'`oc get pod prometheus-prometheus-0 --template={{.status.podIP}}`':9090","access":"proxy","basicAuth":false}'
+oc expose service/grafana
+```
+
+### Setting up the Grafana dashboards
+
+In order to set up the Apache Kafka and Apache Zookeeper dashboards in Grafana, it's possible to interact with the Grafana API directly.
+The first step is about creating a datasource; in this case it is Prometheus.
+
+```shell
+curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/datasources  -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"name":"Prometheus","isDefault":true ,"type":"prometheus","url":"http://'`oc get pod prometheus-prometheus-0 --template={{.status.podIP}}`':9090","access":"proxy","basicAuth":false}'
 ```
 
 Then we can create Kafka dashboard which is receiving data from created datasource.
 
 ```shell
-curl --user admin:admin -X POST 'http://'$(oc get svc grafana -o=jsonpath='{.spec.clusterIP}')':3000/api/dashboards/import' -d @metrics/grafana/strimzi-kafka.json --header "Content-Type: application/json"
+curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/dashboards/import -d @metrics/grafana/strimzi-kafka.json --header "Content-Type: application/json"
 ```
 
-Similary we can create a Kafka Connect S2I dashboard
+Similary we can create the Zookeeper dashboard.
+
 ```shell
-curl --user admin:admin -X POST 'http://'$(oc get svc grafana -o=jsonpath='{.spec.clusterIP}')':3000/api/dashboards/import' -d @metrics/grafana/strimzi-kafka-connect-s2i.json --header "Content-Type: application/json"
+curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/dashboards/import -d @metrics/grafana/strimzi-zookeeper.json --header "Content-Type: application/json"
 ```
 
-and Zookeeper dashboard
+Finally, the Apache Kafka Connect dashboard.
+
 ```shell
-curl --user admin:admin -X POST 'http://'$(oc get svc grafana -o=jsonpath='{.spec.clusterIP}')':3000/api/dashboards/import' -d @metrics/grafana/strimzi-zookeeper.json --header "Content-Type: application/json"
+curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/dashboards/import -d @metrics/grafana/strimzi-kafka-connect-s2i.json --header "Content-Type: application/json"
 ```
