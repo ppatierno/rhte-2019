@@ -107,21 +107,18 @@ This operator allows us to easily deploy another segment - Prometheus server. Wi
 Grafana is a graphical tool which displays selected metrics very easily.
 
 ### Deploying Prometheus Operator
-To deploy Prometheus Operator we can use [bundle file](https://raw.githubusercontent.com/coreos/prometheus-operator/master/bundle.yaml) provided by CoreOS. 
+To deploy Prometheus Operator we can use single file. 
 
-The file contains all the neccessary resources which are needed to deploy this operator:
+This file contains all the neccessary resources which are needed to deploy operator:
 - ClusterRole - permissions to manipulate with resources
 - ClusterRoleBinding - binding between CLusterRole and ServiceAccount
 - Deployment - specification of the Prometheus Operator deployment
 - ServiceAccount
 - Service
 
-This file is generated so you should modify it. You should remove all the `namespace: default` values except of one in `ClusterRoleBinding`. Here you should put your namespace.
-When deploying on OpenShift you should also remove `spec.securityContext` from the `Deployment`.
-
-After these modifications you can use
+Prometheus Operator is deployed by
 ```shell
-oc apply -f bundle.yaml
+oc apply -f metrics/prometheus/prometheus-operator.yaml
 ```
 
 ### Deploying Prometheus and Alertmanager
@@ -130,14 +127,13 @@ When the Prometheus Operator is deployed, you can send a `Prometheus` and `Alert
 Before we do that, we need to prepare a `Secret`s resources which are used by servers. These `Secret`s contain additional configuration for Prometheus and Alertmanager servers.
 
 ```shell
-TBD: adding entire prometheus dir to this repo?
-oc create secret generic additional-scrape-configs --from-file=additional-properties/prometheus-additional.yaml
-oc create secret generic alertmanager-alertmanager --from-file=alertmanager.yaml=alertmanager-config/alert-manager-config.yaml
+oc create secret generic additional-scrape-configs --from-file=metrics/prometheus/additional-properties/prometheus-additional.yaml
+oc create secret generic alertmanager-alertmanager --from-file=alertmanager.yaml=metrics/prometheus/alertmanager-config/alert-manager-config.yaml
 ```
 
-Now we can apply all files from the `install` folder.
+Now we can apply all files from Prometheus `install` folder.
 ```shell
-oc apply -f install
+oc apply -f metrics/prometheus/install
 ```
 
 By this, these files are applied:
@@ -152,8 +148,7 @@ Now the Prometheus and Alertmanager pods should be created.
 Now we will deploy the last segment of the chain. Grafana is deployed by applying `Deployment` resource. 
 
 ```shell
-TBD: add grafana folder?
-oc apply -f grafana.yaml
+oc apply -f metrics/grafana/grafana.yaml
 ```
 
 ## Setting up the Grafana server
@@ -164,9 +159,18 @@ As first step we need to create a datasource.
 curl --user admin:admin 'http://'$(oc get svc grafana -o=jsonpath='{.spec.clusterIP}')':3000/api/datasources' -X POST -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"name":"Prometheus","isDefault":true ,"type":"prometheus","url":"http://'`oc get pod prometheus-prometheus-0 --template={{.status.podIP}}`':9090","access":"proxy","basicAuth":false}'
 ```
 
-Then we can create a dashboard which is receiving data from this datasource.
+Then we can create Kafka dashboard which is receiving data from created datasource.
 
 ```shell
-TBD: copy strimzi-kafka.json
-curl --user admin:admin -X POST 'http://'$(oc get svc grafana -o=jsonpath='{.spec.clusterIP}')':3000/api/dashboards/import' -d @strimzi-kafka.json --header "Content-Type: application/json"
+curl --user admin:admin -X POST 'http://'$(oc get svc grafana -o=jsonpath='{.spec.clusterIP}')':3000/api/dashboards/import' -d @metrics/grafana/strimzi-kafka.json --header "Content-Type: application/json"
+```
+
+Similary we can create a Kafka Connect dashboard
+```shell
+curl --user admin:admin -X POST 'http://'$(oc get svc grafana -o=jsonpath='{.spec.clusterIP}')':3000/api/dashboards/import' -d @metrics/grafana/strimzi-kafka-connect.json --header "Content-Type: application/json"
+```
+
+and Zookeeper dashboard
+```shell
+curl --user admin:admin -X POST 'http://'$(oc get svc grafana -o=jsonpath='{.spec.clusterIP}')':3000/api/dashboards/import' -d @metrics/grafana/strimzi-zookeeper.json --header "Content-Type: application/json"
 ```
