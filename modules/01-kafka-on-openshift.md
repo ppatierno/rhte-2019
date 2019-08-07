@@ -135,6 +135,10 @@ Now we can apply all files from Prometheus `install` folder.
 ```shell
 oc apply -f metrics/prometheus/install
 ```
+NOTE: If you use another namespace than `myproject` you have to adjust a namespace. You can use this command:
+```shell
+sed -i 's/namespace: .*/namespace: your-namespace/' metrics/prometheus-operator.yaml
+```
 
 By this, these files are applied:
 - alert-manager.yaml - specificaion of the `Alertmanager` resource and the `Service` which is pulling alerts from the Prometheus server
