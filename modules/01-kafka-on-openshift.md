@@ -149,8 +149,8 @@ sed -i 's/namespace: .*/namespace: your-namespace/' metrics/prometheus-operator.
 
 By this, these files are applied:
 
-* alert-manager.yaml - specificaion of the `Alertmanager` resource and the `Service` which is pulling alerts from the Prometheus server
-* prometheus.yaml - specification of the `Prometheus` resource including a RBAC resources
+* alert-manager.yaml - specificaion of the `Alertmanager` resource and the `Service` which is umbrelling Alert manager pods
+* prometheus.yaml - specification of the `Prometheus` resource including a RBAC resources and the `Service` which is umbrelling Prometheus pods
 * prometheus-rules.yaml - specification of the `PrometheusRule`. These are conditions which when violated, an alert is fired
 * strimzi-service-monitor.yaml - specification of the `ServiceMonitor` resource where are described jobs for scraping metrics
 
@@ -173,10 +173,11 @@ oc expose service/grafana
 ### Setting up the Grafana dashboards
 
 In order to set up the Apache Kafka and Apache Zookeeper dashboards in Grafana, it's possible to interact with the Grafana API directly.
-The first step is about creating a datasource; in this case it is Prometheus.
+
+The first step is about creating a datasource; in this case it is called Prometheus.
 
 ```shell
-curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/datasources  -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"name":"Prometheus","isDefault":true ,"type":"prometheus","url":"http://'`oc get pod prometheus-prometheus-0 --template={{.status.podIP}}`':9090","access":"proxy","basicAuth":false}'
+curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/datasources  -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"name":"Prometheus","isDefault":true ,"type":"prometheus","url":"http://'`(oc get service prometheus -o jsonpath='{.spec.clusterIP}{"\n"}')`':9090","access":"default","basicAuth":false}'
 ```
 
 Then we can create Kafka dashboard which is receiving data from created datasource.
