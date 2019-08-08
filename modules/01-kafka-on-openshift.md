@@ -177,7 +177,7 @@ In order to set up the Apache Kafka and Apache Zookeeper dashboards in Grafana, 
 The first step is about creating a datasource; in this case it is called Prometheus.
 
 ```shell
-curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/datasources  -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"name":"Prometheus","isDefault":true ,"type":"prometheus","url":"http://'`(oc get service prometheus -o jsonpath='{.spec.clusterIP}{"\n"}')`':9090","access":"default","basicAuth":false}'
+curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/datasources  -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"name":"Prometheus","isDefault":true ,"type":"prometheus","url":"http://prometheus:9090","access":"proxy","basicAuth":false}'
 ```
 
 Then we can create Kafka dashboard which is receiving data from created datasource.

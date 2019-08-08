@@ -50,6 +50,8 @@ apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
   name: prometheus
+  labels:
+    app: strimzi
 spec:
   replicas: 1
   serviceAccountName: prometheus-server
