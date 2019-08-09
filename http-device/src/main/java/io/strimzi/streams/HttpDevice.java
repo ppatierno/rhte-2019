@@ -74,7 +74,7 @@ public class HttpDevice extends AbstractVerticle {
         JsonObject telemetry = new JsonObject().put("deviceId", this.config.getDeviceId()).put("temperature", temperature);
 
         JsonObject records = new JsonObject();
-        records.put("records", new JsonArray().add(new JsonObject().put("value", telemetry)));
+        records.put("records", new JsonArray().add(new JsonObject().put("key", this.config.getDeviceId()).put("value", telemetry)));
 
         log.info("HTTP device {} sending {}", this.config.getDeviceId(), telemetry);
         this.client.post("/topics/" + topic)
