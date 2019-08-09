@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: http-device
+  name: http-device
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: http-device
+  template:
+    metadata:
+      labels:
+        app: http-device
+    spec:
+      containers:
+      - name: http-device
+        image: ppatierno/rhte-http-device:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: DEVICE_IDS
+            value: "1"
+          - name: HOST
+            value: my-bridge-bridge-service
+          - name: PORT
+            value: "8080"
+          - name: TOPIC
+            value: device-telemetry
+          - name: SEND_INTERVAL
+            value: "1000"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
