@@ -15,7 +15,7 @@ public class HttpDeviceConfig {
 
     private static final String DEFAULT_HOST = "localhost";
     private static final int DEFAULT_PORT = 8080;
-    private static final String DEFAULT_TOPIC = "test";
+    private static final String DEFAULT_TOPIC = "device-telemetry";
     private static final int DEFAULT_SEND_INTERVAL = 1000;
 
     private final String deviceId;

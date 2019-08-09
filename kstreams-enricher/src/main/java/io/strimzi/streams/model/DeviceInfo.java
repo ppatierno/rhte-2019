@@ -21,7 +21,7 @@ public class DeviceInfo {
     public String toString() {
         return "DeviceInfo(" +
                 "id = " + this.id +
-                ", manufacturer = " + this.manufacturer +
+                ",manufacturer = " + this.manufacturer +
                 ")";
     }
 }

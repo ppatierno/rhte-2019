@@ -255,6 +255,19 @@ spec:
           patternType: literal
         operation: Describe
         host: "*"
+      # rights for reading from the device-telemetry-enriched topic
+      - resource:
+          type: topic
+          name: device-telemetry-enriched
+          patternType: literal
+        operation: Read
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry-enriched
+          patternType: literal
+        operation: Describe
+        host: "*"
       # rights for joining the kafka-console-consumer consumer group
       - resource:
           type: group
