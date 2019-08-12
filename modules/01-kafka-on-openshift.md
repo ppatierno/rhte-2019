@@ -195,5 +195,5 @@ curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.in
 Finally, the Apache Kafka Connect dashboard.
 
 ```shell
-curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/dashboards/import -d @metrics/grafana/strimzi-kafka-connect-s2i.json --header "Content-Type: application/json"
+curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/dashboards/import -d @metrics/grafana/strimzi-kafka-connect.json --header "Content-Type: application/json"
 ```
