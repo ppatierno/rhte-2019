@@ -35,7 +35,7 @@ The operator will be installed in the `operators` namespace and will be able to 
 
 ### Manual installation
 
-Download the latest release of the Strimzi project.
+Download the [latest release](https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.13.0) of the Strimzi project.
 From the extracted folder, run the following command (with a user having admin rights).
 
 ```shell
