@@ -15,10 +15,10 @@ The module-01 covers how to deploy the Apache Kafka cluster on OpenShift using t
 It also shows how to create the topics needed for ingesting the data and the users for handling authentication and authorization using the Strimzi topic and user operators.
 
 The data coming from the devices needs to be enriched by some other information provided by the backend system.
-A MySQL database is used for storing more information (i.e. device manufacturer, ...).
+A PostgreSQL database is used for storing more information (i.e. device manufacturer, ...).
 
-The module-02 covers how to use Apache Kafka Connect and the MySQL connector provided by Debezium for doing CDC (Change Data Capture).
-With CDC every change on the MySQL database (new added device, information update, ...) is streamed as an event to an Apache Kafka topic.
+The module-02 covers how to use Apache Kafka Connect and the PostgreSQL connector provided by Debezium for doing CDC (Change Data Capture).
+With CDC every change on the PostgreSQL database (new added device, information update, ...) is streamed as an event to an Apache Kafka topic.
 
 An application, running on the platform, is in charge to join backend device information with data telemetry coming from the field in order to produce enriched information for monitoring the entire system.
 
