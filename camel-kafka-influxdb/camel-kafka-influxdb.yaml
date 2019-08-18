@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: camel-kafka-influxdb
+  name: camel-kafka-influxdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camel-kafka-influxdb
+  template:
+    metadata:
+      labels:
+        app: camel-kafka-influxdb
+    spec:
+      containers:
+      - name: camel-kafka-influxdb
+        image: ppatierno/rhte-camel-kafka-influxdb:latest
+        env:
+        - name: BOOTSTRAP_SERVERS
+          value: my-cluster-kafka-bootstrap:9092
+        - name: TOPIC_DEVICE_DATA
+          value: iot-device-data
+        - name: DATABASE_URL
+          value: http://influxdb:8086
+        - name: DATABASE
+          value: sensor
+        - name: MEASUREMENT
+          value: device-data
+        - name: CONSUMER_GROUP
+          value: camel-kafka-influxdb
+        - name: USERNAME
+          value: camel-kafka-influxdb
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: camel-kafka-influxdb
+              key: password
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
