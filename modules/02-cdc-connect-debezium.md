@@ -25,15 +25,15 @@ In this workshop we will use `KafkaConnect` for adding the Debezium PostgreSQL p
 If you want to use `KafkaConnectS2I`, you can follow [KafkaConnectS2I module](./02-cdc-connect-s2i-debezium.md). 
 
 First, we will need to build a image containing desired plugins.
-NOTE: You can skip building image and use prepared one from the `sknot/debezium-connector-postgres:0.9.5.Final`
+NOTE: You can skip building image and use prepared one from the `quay.io/amqstreamsrhte2019/rhte-kafka-connect-debezium-postgres:latest`
 
 To download debezium connector plugin, build and push image to `your_repository` you can use a command:
 ```shell
 export DEBEZIUM_VERSION=0.9.5.Final
 mkdir -p kafka-connect-debezium/my-plugins && cd kafka-connect-debezium/my-plugins && \
 curl http://central.maven.org/maven2/io/debezium/debezium-connector-postgres/$DEBEZIUM_VERSION/debezium-connector-postgres-$DEBEZIUM_VERSION-plugin.tar.gz | tar xz && cd .. && \
-docker build -t your_repository/debezium-connector-postgres:$DEBEZIUM_VERSION . && \
-docker push your_repository/debezium-connector-postgres:$DEBEZIUM_VERSION  && \
+docker build -t your_repository/rhte-kafka-connect-debezium-postgres:latest . && \
+docker push your_repository/rhte-kafka-connect-debezium-postgres:latest  && \
 rm -rf my-plugins && cd ..
 ```
 
@@ -45,7 +45,7 @@ oc apply -f kafka-connect-debezium/kafka-connect.yaml
 NOTE: If you built your own image, you have to replace it in the `spec.image` of `kafka-connect-debezium/kafka-connect.yaml` file.
 You can use this command:
 ```shell
-sed -i 's/image: .*/image: your_repo\/debezium-connector-postgres:0.9.5.Final/' kafka-connect-debezium/kafka-connect.yaml
+sed -i 's/image: .*/image: your_repo\/rhte-kafka-connect-debezium-postgres:latest/' kafka-connect-debezium/kafka-connect.yaml
 ```
 
 Check that the connector plugin is loaded successfully in the new image.

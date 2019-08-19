@@ -3,7 +3,7 @@ kind: KafkaConnect
 metadata:
   name: my-connect-cluster
 spec:
-  image: sknot/debezium-connector-postgres:0.9.5.Final
+  image: quay.io/amqstreamsrhte2019/rhte-kafka-connect-debezium-postgres:latest
   version: 2.2.1
   replicas: 1
   bootstrapServers: my-cluster-kafka-bootstrap:9093
