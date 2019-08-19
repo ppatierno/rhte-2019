@@ -1,4 +1,4 @@
-# Module 02 - CDC with Apache Kafka Connect and Debezium
+# Module 02 - CDC with Apache Kafka Connect S2I and Debezium
 
 ## Deploy and check PostgreSQL database
 
@@ -15,14 +15,13 @@ Check that the table `deviceinfo` is prepopulated with some devices related info
 oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "SELECT * FROM deviceinfo;"
 ```
 
-## Deploy Apache Kafka Connect
+## Deploy Apache Kafka Connect S2I
 
-The Apache Kafka Connect cluster can be deployed using the cluster operator.
-There are two available CRDs (Custom Resource Definitions) for that: `KafkaConnect` and `KafkaConnectS2I`.
+The Apache Kafka Connect S2I cluster can be deployed using the cluster operator.
 The `KafkaConnectS2I` CRD leverages the Source-2-Image OpenShift's feature for handling builds and adding connectors plugin.
 It is used for adding the Debezium PostgreSQL plugin connector.
 
-First, deploy the Apache Kafka Connect cluster.
+First, deploy the Apache Kafka Connect S2I cluster.
 
 ```shell
 oc apply -f kafka-connect-debezium/kafka-connect-s2i.yaml
@@ -42,7 +41,7 @@ cd .. && rm -rf plugins
 ```
 
 Check that the connector plugin is loaded successfully in the new image.
-Interact againt the Apache Kafka Connect REST API (from one of the pods running in the OpenShift cluster).
+Interact against the Apache Kafka Connect REST API (from one of the pods running in the OpenShift cluster).
 
 ```shell
 oc exec my-cluster-kafka-0 -c kafka -- curl -s http://my-connect-cluster-connect-api:8083/connector-plugins
@@ -80,7 +79,7 @@ Check that the connector is now loaded.
 oc exec my-cluster-kafka-0 -c kafka -- curl -X GET -H "Accept:application/json" http://my-connect-cluster-connect-api:8083/connectors
 ```
 
-Check that the connector is running and it already read the propulated data in the `deviceinfo` table of the `devices` database from the PostgreSQL instance, sending related events to the `dbserver1.devices.deviceinfo` topic.
+Check that the connector is running and it already read the prepopulated data in the `deviceinfo` table of the `devices` database from the PostgreSQL instance, sending related events to the `dbserver1.devices.deviceinfo` topic.
 Run an Apache Kafka console consumer on one of the pods for receiving messages from the topic from the beginning offset.
 
 ```shell
