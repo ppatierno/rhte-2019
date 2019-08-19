@@ -307,3 +307,36 @@ spec:
           patternType: literal
         operation: Describe
         host: "*"
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaUser
+metadata:
+  name: camel-kafka-influxdb
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # rights for reading from the device-telemetry-enriched topic
+      - resource:
+          type: topic
+          name: device-telemetry-enriched
+          patternType: literal
+        operation: Read
+        host: "*"
+      - resource:
+          type: topic
+          name: device-telemetry-enriched
+          patternType: literal
+        operation: Describe
+        host: "*"
+      # rights for joining the camel-kafka-influxdb consumer group
+      - resource:
+          type: group
+          name: camel-kafka-influxdb
+          patternType: literal
+        operation: Read
+        host: "*"
