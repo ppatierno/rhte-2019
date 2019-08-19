@@ -89,6 +89,7 @@ In order to improve the security, setting up authentication and authorization is
 * the Apache Kafka Connect cluster, using the Debezium PostgreSQL connector, has to WRITE to the `dbserver1.devices.deviceinfo` topic.
 * the Kafka Streams application has to READ from the `dbserver1.devices.deviceinfo` and `device-telemetry` topics and WRITE to the `device-telemetry-enriched` topic.
 * the HTTP - Kafka bridge has to WRITE to the `device-telemetry` topic.
+* a Camel based application for putting the data into InfluxDB, as time-series database for showing such a data in Grafana dashboards, has to READ from `device-telemetry-enriched` topic.
 
 For each of these applications, an Apache Kafka user is created via a corresponding `KafkaUser` resource.
 Within such a resource it is possible to describe the kind of authentication and authorization mechanism to use.
