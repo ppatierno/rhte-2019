@@ -58,7 +58,6 @@ public class CamelKafkaInfluxdb {
                         Point point = Point.measurement(config.measurement())
                                 .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                                 .tag("deviceId", deviceId)
-                                .addField("deviceId", deviceData.deviceId)
                                 .addField("temperature", deviceData.temperature)
                                 .addField("manufacturer", deviceData.manufacturer)
                                 .build();
