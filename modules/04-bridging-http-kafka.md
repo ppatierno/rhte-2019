@@ -28,7 +28,7 @@ Check that the messages are coming to that topic.
 
 ```shell
 export CONSOLE_CONSUMER_PASSWORD=$(oc get secret kafka-console-consumer -o jsonpath='{.data.password}' | base64 -d)
-oc exec my-cluster-kafka-0 -- /opt/kafka/bin/kafka-console-consumer.sh \
+oc exec my-cluster-kafka-0 -c kafka -- /opt/kafka/bin/kafka-console-consumer.sh \
     --bootstrap-server my-cluster-kafka-bootstrap:9092 \
     --from-beginning \
     --property print.key=true \

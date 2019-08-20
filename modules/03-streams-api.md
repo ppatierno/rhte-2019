@@ -12,7 +12,7 @@ In order to simulate some data and checking that the Kafka Streams application i
 
 ```shell
 export CONSOLE_PRODUCER_PASSWORD=$(oc get secret kafka-console-producer -o jsonpath='{.data.password}' | base64 -d)
-oc exec -it my-cluster-kafka-0 -- /opt/kafka/bin/kafka-console-producer.sh \
+oc exec -it my-cluster-kafka-0 -c kafka -- /opt/kafka/bin/kafka-console-producer.sh \
     --broker-list my-cluster-kafka-bootstrap:9092 \
     --topic device-telemetry \
     --property "parse.key=true" \

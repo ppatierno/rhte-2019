@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: kstreams-enricher
-        image: ppatierno/rhte-kstreams-enricher:latest
+        image: quay.io/amqstreamsrhte2019/rhte-kstreams-enricher:latest
         imagePullPolicy: IfNotPresent
         env:
           - name: APPLICATION_ID
