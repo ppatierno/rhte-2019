@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: http-device
-        image: ppatierno/rhte-http-device:latest
+        image: quay.io/amqstreamsrhte2019/rhte-http-device:latest
         imagePullPolicy: IfNotPresent
         env:
           - name: DEVICE_IDS

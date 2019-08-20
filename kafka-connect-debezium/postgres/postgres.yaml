@@ -14,7 +14,7 @@ spec:
       serviceAccountName: postgres
       containers:
       - name: postgres
-        image: ppatierno/rhte-postgres:latest
+        image: quay.io/amqstreamsrhte2019/rhte-postgres:latest
         imagePullPolicy: IfNotPresent
         env:
           - name: POSTGRES_USER
@@ -67,6 +67,4 @@ spec:
     port: 5432
     protocol: TCP
     targetPort: postgres
-type: ClusterIP
-
-          
+  type: ClusterIP
