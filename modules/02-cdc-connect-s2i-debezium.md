@@ -52,7 +52,7 @@ oc exec my-cluster-kafka-0 -c kafka -- curl -s http://my-connect-cluster-connect
 Register the Debezium PostgreSQL connector with the related configuration to run against the deployed PostgreSQL instance:
 
 ```shell
-oc exec -i -c kafka my-cluster-kafka-0 -- curl -X POST \
+oc exec -it -c kafka my-cluster-kafka-0 -- curl -X POST \
     -H "Accept:application/json" \
     -H "Content-Type:application/json" \
     http://my-connect-cluster-connect-api:8083/connectors -d @- <<'EOF'

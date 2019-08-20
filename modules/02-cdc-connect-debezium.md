@@ -45,7 +45,7 @@ oc apply -f kafka-connect-debezium/kafka-connect.yaml
 NOTE: If you build your own image, you have to replace it in the `spec.image` of `kafka-connect-debezium/kafka-connect.yaml` file.
 You can use this command:
 ```shell
-sed -i 's/image: .*/image: your_repo\/rhte-kafka-connect-debezium-postgres:latest/' kafka-connect-debezium/kafka-connect.yaml
+sed -i 's/image: .*/image: your_repository\/rhte-kafka-connect-debezium-postgres:latest/' kafka-connect-debezium/kafka-connect.yaml
 ```
 
 Check that the connector plugin is loaded successfully in the new image.
@@ -92,7 +92,7 @@ Run an Apache Kafka console consumer on one of the pods for receiving messages f
 
 ```shell
 export CONSOLE_CONSUMER_PASSWORD=$(oc get secret kafka-console-consumer -o jsonpath='{.data.password}' | base64 -d)
-oc exec my-cluster-kafka-0 -c kafka -- /opt/kafka/bin/kafka-console-consumer.sh \
+oc exec -it my-cluster-kafka-0 -c kafka -- /opt/kafka/bin/kafka-console-consumer.sh \
     --bootstrap-server my-cluster-kafka-bootstrap:9092 \
     --from-beginning \
     --property print.key=true \
