@@ -22,12 +22,12 @@ There are two available CRDs (Custom Resource Definitions) for that: `KafkaConne
 The `KafkaConnect` CRD uses Kafka Connect image as a base layer and the connector plugins are injected by building new image on top of it.
 The `KafkaConnectS2I` CRD leverages the Source-2-Image OpenShift's feature for handling builds and adding connectors plugin.
 In this workshop we will use `KafkaConnect` for adding the Debezium PostgreSQL plugin connector.
-If you want to use `KafkaConnectS2I`, you can follow [KafkaConnectS2I module](./02-cdc-connect-s2i-debezium.md). 
+If you want to use `KafkaConnectS2I`, you can follow [KafkaConnectS2I module](02-cdc-connect-s2i-debezium.md). 
 
 First, we will need to build a image containing desired plugins.
 NOTE: You can skip building image and use prepared one from the `quay.io/amqstreamsrhte2019/rhte-kafka-connect-debezium-postgres:latest`
 
-To download debezium connector plugin, build and push image to `your_repository` you can use a command:
+To download Debezium PostgreSQL connector plugin, build and push image to `your_repository` you can use a command:
 ```shell
 export DEBEZIUM_VERSION=0.9.5.Final
 mkdir -p kafka-connect-debezium/my-plugins && cd kafka-connect-debezium/my-plugins && \
@@ -42,7 +42,7 @@ You can deploy the Kafka Connect cluster with the built image now.
 ```shell
 oc apply -f kafka-connect-debezium/kafka-connect.yaml
 ```
-NOTE: If you built your own image, you have to replace it in the `spec.image` of `kafka-connect-debezium/kafka-connect.yaml` file.
+NOTE: If you build your own image, you have to replace it in the `spec.image` of `kafka-connect-debezium/kafka-connect.yaml` file.
 You can use this command:
 ```shell
 sed -i 's/image: .*/image: your_repo\/rhte-kafka-connect-debezium-postgres:latest/' kafka-connect-debezium/kafka-connect.yaml
