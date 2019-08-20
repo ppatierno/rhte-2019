@@ -29,6 +29,10 @@ spec:
             value: device-telemetry
           - name: SEND_INTERVAL
             value: "1000"
+          - name: MIN_TEMP
+            value: "0"
+          - name: MAX_TEMP
+            value: "100"
         resources:
           requests:
             memory: "256Mi"
