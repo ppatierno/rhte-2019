@@ -69,7 +69,6 @@ public class HttpDevice extends AbstractVerticle {
     private Future <List<OffsetRecordSent>> send(String topic) {
         Future<List<OffsetRecordSent>> fut = Future.future();        
 
-        //TODO: better sensor simulation
         int temperature = config.getMinTemperature() + random.nextInt((config.getMaxTemperature() + 1 - config.getMinTemperature()));
         JsonObject telemetry = new JsonObject().put("deviceId", this.config.getDeviceId()).put("temperature", temperature);
 
