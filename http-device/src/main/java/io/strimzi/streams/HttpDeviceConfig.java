@@ -12,17 +12,23 @@ public class HttpDeviceConfig {
     private static final String ENV_PORT = "PORT";
     private static final String ENV_TOPIC = "TOPIC";
     private static final String ENV_SEND_INTERVAL = "SEND_INTERVAL";
+    private static final String ENV_MIN_TEMPERATURE = "MIN_TEMPERATURE";
+    private static final String ENV_MAX_TEMPERATURE = "MAX_TEMPERATURE";
 
     private static final String DEFAULT_HOST = "localhost";
     private static final int DEFAULT_PORT = 8080;
     private static final String DEFAULT_TOPIC = "device-telemetry";
     private static final int DEFAULT_SEND_INTERVAL = 1000;
+    private static final int DEFAULT_MIN_TEMPERATURE = 20;
+    private static final int DEFAULT_MAX_TEMPERATURE = 25;
 
     private final String deviceId;
     private final String host;
     private final int port;
     private final String topic;
     private final int sendInterval;
+    private final int minTemperature;
+    private final int maxTemperature;
 
     /**
      * Constructor
@@ -32,14 +38,18 @@ public class HttpDeviceConfig {
      * @param port host port to which connect to
      * @param topic Kafka topic from which consume messages
      * @param sendInterval interval (in ms) for sending messages
+     * @param minTemperature minimal generated temperature
+     * @param maxTemperature maximal generated temperature
      */
     private HttpDeviceConfig(String deviceId, String host, int port, 
-                             String topic, int sendInterval) {
+                             String topic, int sendInterval, int minTemperature, int maxTemperature) {
         this.deviceId = deviceId;
         this.host = host;
         this.port = port;
         this.topic = topic;
         this.sendInterval = sendInterval;
+        this.minTemperature = minTemperature;
+        this.maxTemperature = maxTemperature;
     }
 
     /**
@@ -78,6 +88,20 @@ public class HttpDeviceConfig {
     }
 
     /**
+     * @return minimal generated temperature
+     */
+    public int getMinTemperature() {
+        return minTemperature;
+    }
+
+    /**
+     * @return maximal generated temperature
+     */
+    public int getMaxTemperature() {
+        return maxTemperature;
+    }
+
+    /**
      * Load all HTTP device configuration parameters from a related map
      * 
      * @param map map from which loading configuration parameters
@@ -92,7 +116,9 @@ public class HttpDeviceConfig {
         int port = Integer.parseInt(map.getOrDefault(ENV_PORT, DEFAULT_PORT).toString());
         String topic = (String) map.getOrDefault(ENV_TOPIC, DEFAULT_TOPIC);
         int sendInterval = Integer.parseInt(map.getOrDefault(ENV_SEND_INTERVAL, DEFAULT_SEND_INTERVAL).toString());
-        return new HttpDeviceConfig(deviceId, host, port, topic, sendInterval);
+        int minTemperature = Integer.parseInt(map.getOrDefault(ENV_MIN_TEMPERATURE, DEFAULT_MIN_TEMPERATURE).toString());
+        int maxTemperature = Integer.parseInt(map.getOrDefault(ENV_MAX_TEMPERATURE, DEFAULT_MAX_TEMPERATURE).toString());
+        return new HttpDeviceConfig(deviceId, host, port, topic, sendInterval, minTemperature, maxTemperature);
     }
 
     @Override
@@ -103,6 +129,8 @@ public class HttpDeviceConfig {
                 ",port=" + this.port +
                 ",topic=" + this.topic +
                 ",sendInterval=" + this.sendInterval +
+                ",minTemperature=" + this.minTemperature +
+                ",maxTemperature=" + this.maxTemperature +
                 ")";
     }
 }
