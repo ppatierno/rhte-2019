@@ -30,9 +30,12 @@ The [module-04](modules/04-bridging-http-kafka.md) covers how to deploy the HTTP
 The devices are now able to send their telemetry data over HTTP/1.1 protocol for interacting with the Apache Kafka cluster.
 As covered by previous module, the data are enriched with information from the backend system and monitored on a console.
 
+It's also available an optional step in the [appendix](modules/appendix-influxdb.md) which is about storing enriched telemetry data in a time-series database as InfluxDB and then showing them in a corresponding Grafana dashboard.
+
 ## Modules
 
 * 01 - [Running Apache Kafka on OpenShift](modules/01-kafka-on-openshift.md)
 * 02 - [CDC with Apache Kafka Connect and Debezium](modules/02-cdc-connect-debezium.md)
 * 03 - [Data stream processing with Apache Kafka Stream API](modules/03-streams-api.md)
 * 04 - [Bridging HTTP to Apache Kafka](modules/04-bridging-http-kafka.md)
+* Appendix - [InfluxDB and telemetry data Grafana dashbaord](modules/appendix-influxdb.md)
