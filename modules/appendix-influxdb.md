@@ -27,3 +27,17 @@ To check that the incoming data are copied from the topic to the InfluxDB databa
 ```shell
 oc exec -it $(oc get pods --selector=app=influxdb -o=jsonpath='{.items[0].metadata.name}') -- influx -database 'sensor' -execute 'SELECT "deviceId", "temperature" FROM "device-data"'
 ```
+
+## Setting up Grafana
+
+The first step is about create a new datasource backed by the above InfluxDB instance.
+
+```shell
+curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/datasources  -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"name":"InfluxDB","isDefault":true ,"type":"influxdb","url":"http://influxdb:8086","access":"proxy","basicAuth":false,"database":"sensor"}'
+```
+
+Than we can create a Grafana dashboard for showing the device telemetry data.
+
+```shell
+curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/dashboards/import -d @metrics/grafana/kafka-iot-dashboard.json --header "Content-Type: application/json"
+```
