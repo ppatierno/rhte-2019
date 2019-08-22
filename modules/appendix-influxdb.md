@@ -2,7 +2,7 @@
 
 After the enriched data are available in the `device-telemetry-enriched` topic, it should be possible to show them on a dashboard.
 One of the possible approaches is using a time-series database, where the telemetry data are stored with a related timestamp and the showing them on a Grafana dashboard.
-One of the well-known time-series databases is InfluxDB.
+One of the well-known time-series databases is [InfluxDB](https://www.influxdata.com/).
 
 ## Setting up InfluxDB
 
