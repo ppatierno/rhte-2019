@@ -41,3 +41,7 @@ Than we can create a Grafana dashboard for showing the device telemetry data.
 ```shell
 curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/dashboards/import -d @metrics/grafana/kafka-iot-dashboard.json --header "Content-Type: application/json"
 ```
+
+Following how the dashboard looks like.
+
+![Kafka IoT dashboard](../images/kafka-iot-dashboard.png)
