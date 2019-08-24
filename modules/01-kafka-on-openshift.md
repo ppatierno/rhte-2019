@@ -11,7 +11,8 @@ The Cluster Operator can be installed in many different ways:
 
 ### Operator Hub on OpenShift 4.x
 
-TBD
+Create or set as current project `myproject`.
+Using the OCP4 OperatorHub, install the AMQ Streams 1.2.0 operator and select as installation mode "A specific namespace on the cluster" specifying the `myproject` namespace; the cluster operator will be available and able to watch Kafka related resources in this namespace only.
 
 ### OperatorHub.io website
 
