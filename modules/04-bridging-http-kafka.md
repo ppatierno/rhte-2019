@@ -39,4 +39,9 @@ oc exec my-cluster-kafka-0 -c kafka -- /opt/kafka/bin/kafka-console-consumer.sh 
     --group kafka-console-consumer
 ```
 
+## Using real ESP8266 device
+
+Other than using the previous HTTP devices simulator, it's possible to use a real device for sending the data connecting from outside the cluster.
+As an example, you can use an [ESP8266](https://www.espressif.com/en/products/hardware/esp8266ex/overview) device and the related application provided in this [repo](https://github.com/ppatierno/esp8266-http-device).
+
 [Previous - Data stream processing with Apache Kafka Stream API](03-streams-api.md) | [Next - InfluxDB and telemetry data Grafana dashbaord](appendix-influxdb.md)
