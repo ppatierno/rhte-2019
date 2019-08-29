@@ -7,7 +7,7 @@ The HTTP-Kafka bridge provides a way for bridging HTTP/1.1 protocol to the nativ
 Deploy the bridge by running the following command.
 
 ```shell
-oc apply -f kafka/kafka-bridge.yaml
+oc apply -f kafka-http-bridge/kafka-bridge.yaml
 ```
 
 ## Deploying HTTP devices simulator
