@@ -10,4 +10,5 @@ CREATE TABLE deviceinfo (
 
 INSERT INTO deviceinfo
 VALUES ('1', 'manufacturer-A'),
-        ('2', 'manufacturer-B');
+        ('2', 'manufacturer-B'),
+        ('3', 'Espressif Systems');

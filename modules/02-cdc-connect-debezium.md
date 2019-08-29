@@ -108,7 +108,7 @@ oc exec -it my-cluster-kafka-0 -c kafka -- /opt/kafka/bin/kafka-console-consumer
 In another terminal, make a change to the `deviceinfo` table in the `devices` database of the PostgreSQL instance, adding a new device.
 
 ```shell
-oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "INSERT INTO deviceinfo VALUES('3', 'manufacturer-C')"
+oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "INSERT INTO deviceinfo VALUES('4', 'manufacturer-C')"
 ```
 
 A new event is genareted by the Debezium PostgreSQL connector and the consumer gets the message.
@@ -117,7 +117,7 @@ Delete the just created record from the table.
 The connector generates a new message with `null` as payload which represents the tombstone for deleted record so deleting message with same key in a compacted topic.
 
 ```shell
-oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "DELETE FROM deviceinfo WHERE id='3';"
+oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "DELETE FROM deviceinfo WHERE id='4';"
 ```
 
 [Previous - Running Apache Kafka on OpenShift](01-kafka-on-openshift.md) | [Next - Data stream processing with Apache Kafka Stream API](03-streams-api.md)
