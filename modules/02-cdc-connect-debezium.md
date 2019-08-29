@@ -119,3 +119,5 @@ The connector generates a new message with `null` as payload which represents th
 ```shell
 oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "DELETE FROM deviceinfo WHERE id='3';"
 ```
+
+[Previous - Running Apache Kafka on OpenShift](01-kafka-on-openshift.md) | [Next - Data stream processing with Apache Kafka Stream API](03-streams-api.md)

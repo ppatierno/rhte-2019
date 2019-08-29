@@ -199,3 +199,5 @@ Finally, the Apache Kafka Connect dashboard.
 ```shell
 curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/dashboards/import -d @metrics/grafana/strimzi-kafka-connect.json --header "Content-Type: application/json"
 ```
+                                                                    
+[Next - CDC with Apache Kafka Connect and Debezium](02-cdc-connect-debezium.md)

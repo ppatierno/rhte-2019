@@ -28,3 +28,5 @@ Send a few messages to the telemetry topic and check the log that the Kafka Stre
 1:{ "deviceId": "1", "temperature": 15 }
 2:{ "deviceId": "2", "temperature": 20 }
 ```
+
+[Previous - CDC with Apache Kafka Connect and Debezium](02-cdc-connect-debezium.md) | [Next - Bridging HTTP to Apache Kafka](04-bridging-http-kafka.md)
