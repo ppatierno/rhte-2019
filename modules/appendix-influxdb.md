@@ -45,3 +45,5 @@ curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.in
 Following how the dashboard looks like.
 
 ![Kafka IoT dashboard](../images/kafka-iot-dashboard.png)
+
+[Previous - Bridging HTTP to Apache Kafka](04-bridging-http-kafka.md)

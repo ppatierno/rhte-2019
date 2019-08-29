@@ -38,3 +38,5 @@ oc exec my-cluster-kafka-0 -c kafka -- /opt/kafka/bin/kafka-console-consumer.sh 
     --consumer-property sasl.jaas.config="org.apache.kafka.common.security.scram.ScramLoginModule required username=\"kafka-console-consumer\" password=\"${CONSOLE_CONSUMER_PASSWORD}\";" \
     --group kafka-console-consumer
 ```
+
+[Previous - Data stream processing with Apache Kafka Stream API](03-streams-api.md) | [Next - InfluxDB and telemetry data Grafana dashbaord](appendix-influxdb.md)
