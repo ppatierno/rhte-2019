@@ -59,6 +59,7 @@ public class CamelKafkaInfluxdb {
                                 .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                                 .tag("deviceId", deviceId)
                                 .addField("temperature", deviceData.temperature)
+                                .addField("humidity", deviceData.humidity)
                                 .addField("manufacturer", deviceData.manufacturer)
                                 .build();
 
