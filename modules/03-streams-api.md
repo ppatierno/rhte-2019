@@ -25,8 +25,8 @@ oc exec -it my-cluster-kafka-0 -c kafka -- /opt/kafka/bin/kafka-console-producer
 Send a few messages to the telemetry topic and check the log that the Kafka Streams application is joining with information data and enriching.
 
 ```shell
-1:{ "deviceId": "1", "temperature": 15 }
-2:{ "deviceId": "2", "temperature": 20 }
+1:{ "deviceId": "1", "temperature": 15, "humidity": 30 }
+2:{ "deviceId": "2", "temperature": 20, "humidity": 35 }
 ```
 
 [Previous - CDC with Apache Kafka Connect and Debezium](02-cdc-connect-debezium.md) | [Next - Bridging HTTP to Apache Kafka](04-bridging-http-kafka.md)

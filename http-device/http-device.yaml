@@ -33,6 +33,10 @@ spec:
             value: "20"
           - name: MAX_TEMPERATURE
             value: "25"
+          - name: MIN_HUMIDITY
+            value: "50"
+          - name: MAX_HUMIDITY
+            value: "55"
         resources:
           requests:
             memory: "256Mi"
