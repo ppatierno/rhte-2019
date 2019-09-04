@@ -2,13 +2,14 @@ package io.strimzi.streams;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.strimzi.streams.sensors.impl.DHT22;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
@@ -29,7 +30,7 @@ public class HttpDevice extends AbstractVerticle {
 
     private WebClient client;
     private long sendTimer;
-    private Random random = new Random();
+    private DHT22 dht22;
 
     /**
      * Constructor
@@ -43,6 +44,14 @@ public class HttpDevice extends AbstractVerticle {
     @Override
     public void start(Future<Void> startFuture) throws Exception {
         log.info("HTTP device starting with config {}", this.config);
+
+        this.dht22 = new DHT22();
+        Properties dht22Config = new Properties();
+        dht22Config.put(DHT22.MIN_TEMPERATURE, String.valueOf(this.config.getMinTemperature()));
+        dht22Config.put(DHT22.MAX_TEMPERATURE, String.valueOf(this.config.getMaxTemperature()));
+        dht22Config.put(DHT22.MIN_HUMIDITY, String.valueOf(this.config.getMinHumidity()));
+        dht22Config.put(DHT22.MAX_HUMIDITY, String.valueOf(this.config.getMaxHumidity()));
+        this.dht22.init(dht22Config);
 
         WebClientOptions options = new WebClientOptions()
                 .setDefaultHost(this.config.getHost())
@@ -69,8 +78,12 @@ public class HttpDevice extends AbstractVerticle {
     private Future <List<OffsetRecordSent>> send(String topic) {
         Future<List<OffsetRecordSent>> fut = Future.future();        
 
-        int temperature = config.getMinTemperature() + random.nextInt((config.getMaxTemperature() + 1 - config.getMinTemperature()));
-        JsonObject telemetry = new JsonObject().put("deviceId", this.config.getDeviceId()).put("temperature", temperature);
+        int temperature = this.dht22.getTemperature();
+        int humidity = this.dht22.getHumidity();
+        JsonObject telemetry = new JsonObject()
+                                    .put("deviceId", this.config.getDeviceId())
+                                    .put("temperature", temperature)
+                                    .put("humidity", humidity);
 
         JsonObject records = new JsonObject();
         records.put("records", new JsonArray().add(new JsonObject().put("key", this.config.getDeviceId()).put("value", telemetry)));
