@@ -60,7 +60,7 @@ oc exec my-cluster-kafka-0 -c kafka -- curl -s http://my-connect-cluster-connect
 Register the Debezium PostgreSQL connector with the related configuration to run against the deployed PostgreSQL instance:
 
 ```shell
-oc exec -i -c kafka my-cluster-kafka-0 -- curl -X POST \
+oc exec -i -c kafka my-cluster-kafka-0 -- curl -s -X POST \
     -H "Accept:application/json" \
     -H "Content-Type:application/json" \
     http://my-connect-cluster-connect-api:8083/connectors -d @- <<'EOF'
@@ -84,7 +84,7 @@ EOF
 Check that the connector is now loaded.
 
 ```shell
-oc exec my-cluster-kafka-0 -c kafka -- curl -X GET -H "Accept:application/json" http://my-connect-cluster-connect-api:8083/connectors
+oc exec my-cluster-kafka-0 -c kafka -- curl -s -X GET -H "Accept:application/json" http://my-connect-cluster-connect-api:8083/connectors
 ```
 
 Check that the connector is running and it already read the propulated data in the `deviceinfo` table of the `devices` database from the PostgreSQL instance, sending related events to the `dbserver1.devices.deviceinfo` topic.
