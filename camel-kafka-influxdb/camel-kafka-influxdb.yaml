@@ -39,6 +39,9 @@ spec:
               name: camel-kafka-influxdb
               key: password
         resources:
+          requests:
+            memory: "512Mi"
+            cpu: "100m"
           limits:
             memory: "512Mi"
-            cpu: "500m"
+            cpu: "100m"
