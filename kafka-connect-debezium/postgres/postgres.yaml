@@ -22,9 +22,12 @@ spec:
           - name: POSTGRES_PASSWORD
             value: postgres
         resources:
+          requests:
+            memory: "128Mi"
+            cpu: "150m"
           limits:
-            memory: "512Mi"
-            cpu: "500m"
+            memory: "128Mi"
+            cpu: "150m"
         ports:
         - containerPort: 5432
           name: postgres

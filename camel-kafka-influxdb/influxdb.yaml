@@ -30,11 +30,11 @@ spec:
           name: influxdb-storage
         resources:
           requests:
-            memory: "1Gi"
-            cpu: "1"
+            memory: "256Mi"
+            cpu: "250m"
           limits:
-            memory: "1Gi"
-            cpu: "1"
+            memory: "256Mi"
+            cpu: "250m"
       volumes:
       - emptyDir: {}
         name: influxdb-storage
