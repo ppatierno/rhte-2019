@@ -2,14 +2,14 @@
 
 ## Deploy and check PostgreSQL database
 
-Deploy the PostgreSQL database used as storage for devices information with some pre-crated data.
+Deploy the PostgreSQL database which is used as storage for devices information with some pre-created data.
 
 ```shell
 oc adm policy add-scc-to-user anyuid -z postgres
 oc apply -f kafka-connect-debezium/postgres/postgres.yaml
 ```
 
-Check that the table `deviceinfo` is prepopulated with some devices related information.
+Check that the table `deviceinfo` is pre-populated with some devices related information.
 
 ```shell
 oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "SELECT * FROM deviceinfo;"
@@ -24,10 +24,15 @@ The `KafkaConnectS2I` CRD leverages the Source-2-Image OpenShift's feature for h
 In this workshop we will use `KafkaConnect` for adding the Debezium PostgreSQL plugin connector.
 If you want to use `KafkaConnectS2I`, you can follow [KafkaConnectS2I module](02-cdc-connect-s2i-debezium.md). 
 
-First, we will need to build a image containing desired plugins.
-NOTE: You can skip building image and use prepared one from the `quay.io/amqstreamsrhte2019/rhte-kafka-connect-debezium-postgres:latest`
+You can deploy the Kafka Connect cluster with the pre-built image.
 
-To download Debezium PostgreSQL connector plugin, build and push image to `your_repository` you can use a command:
+```shell
+oc apply -f kafka-connect-debezium/kafka-connect.yaml
+```
+
+You could also build the image on your own following these steps.
+
+Download the Debezium PostgreSQL connector plugin, build and push image to `your_repository` using this command:
 ```shell
 export DEBEZIUM_VERSION=0.9.5.Final
 mkdir -p kafka-connect-debezium/my-plugins && cd kafka-connect-debezium/my-plugins && \
@@ -37,16 +42,13 @@ docker push your_repository/rhte-kafka-connect-debezium-postgres:latest  && \
 rm -rf my-plugins && cd ..
 ```
 
-You can deploy the Kafka Connect cluster with the built image now.
-
-```shell
-oc apply -f kafka-connect-debezium/kafka-connect.yaml
-```
-NOTE: If you build your own image, you have to replace it in the `spec.image` of `kafka-connect-debezium/kafka-connect.yaml` file.
+Because you built your own image, you have to replace it in the `spec.image` of `kafka-connect-debezium/kafka-connect.yaml` file.
 You can use this command:
 ```shell
 sed -i 's/image: .*/image: your_repository\/rhte-kafka-connect-debezium-postgres:latest/' kafka-connect-debezium/kafka-connect.yaml
 ```
+
+Finally, you can deploy Kafka Connect with the new image as described above.
 
 Check that the connector plugin is loaded successfully in the new image.
 Interact against the Apache Kafka Connect REST API (from one of the pods running in the OpenShift cluster).
@@ -81,13 +83,13 @@ oc exec -i -c kafka my-cluster-kafka-0 -- curl -s -X POST \
 EOF
 ```
 
-Check that the connector is now loaded.
+Check that the connector is now up and running.
 
 ```shell
-oc exec my-cluster-kafka-0 -c kafka -- curl -s -X GET -H "Accept:application/json" http://my-connect-cluster-connect-api:8083/connectors
+oc exec my-cluster-kafka-0 -c kafka -- curl -s -X GET -H "Accept:application/json" http://my-connect-cluster-connect-api:8083/connectors/devices-connector/status
 ```
 
-Check that the connector is running and it already read the propulated data in the `deviceinfo` table of the `devices` database from the PostgreSQL instance, sending related events to the `dbserver1.devices.deviceinfo` topic.
+Check that the connector is running and it already read the pro-pulated data in the `deviceinfo` table of the `devices` database from the PostgreSQL instance, sending related events to the `dbserver1.devices.deviceinfo` topic.
 Run an Apache Kafka console consumer on one of the pods for receiving messages from the topic from the beginning offset.
 
 ```shell
