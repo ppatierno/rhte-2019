@@ -12,11 +12,11 @@ The Cluster Operator can be installed in many different ways:
 ### Operator Hub on OpenShift 4.x
 
 Create or set as current project `myproject`.
-Using the OCP4 OperatorHub, install the AMQ Streams 1.2.0 operator and select as installation mode "A specific namespace on the cluster" specifying the `myproject` namespace; the cluster operator will be available and able to watch Kafka related resources in this namespace only.
+Using the OpenShift 4.x OperatorHub, install the AMQ Streams 1.2.0 operator and select as installation mode "A specific namespace on the cluster" specifying the `myproject` namespace; the cluster operator will be available and able to watch Kafka related resources in this namespace only.
 
 ### OperatorHub.io website
 
-The OperatorHub.io website provides the latest version of the Strimzi project providing the Cluster Operator.
+The [OperatorHub.io]((https://operatorhub.io/)) website provides the latest version of the Strimzi project providing the Cluster Operator.
 Because the process involves the OLM installation, it's useful for OpenShift 3.11 where the Operator Hub is not already available.
 First of all, install the OLM (the user has to have adming rights to do so).
 
@@ -45,6 +45,11 @@ oc apply -f install/cluster-operator
 
 The operator will be running in the working namespace.
 
+NOTE: If you use another namespace than `myproject` you have to adjust it accordingly running this command:
+```shell
+sed -i 's/namespace: .*/namespace: your-namespace/' install/cluster-operator/*RoleBinding*.yaml
+```
+
 ## Apache Kafka cluster deployment
 
 The Cluster Operator is able to watch `Kafka` resources describing an Apache Kafka cluster.
@@ -56,16 +61,16 @@ oc apply -f kafka/kafka-cluster.yaml
 
 The main points on this cluser are:
 
-* The Kafka cluster is made by 3 brokers (see `spec.kafka.replicas`)
-* There are two listeners, a "plain" (`spec.kafka.listeners.plain`) one listening on port 9092 and "tls" (`spec.kafka.listeners.tls`) one on port 9093
-* Authentication is enabled on both "plain" and "tls". It uses SCRAM-SHA-512 mechanism.
-* Authorization is enabled on the Kafka cluster. It uses the "simple" mechanism (see `spec.kafka.authorization`)
-* The Kafka brokers have some common configuration via `spec.kafka.config`
-* The Kafka brokers uses JBOD for persistent storage with one disk (see `spec.kafka.storage`)
-* The Kafka brokers export metrics through JMX exporter configured via `spec.kafka.metrics`
-* The Zookeeper ensamble is made by 3 nodes (see `spec.zookeeper.replicas`)
-* The Zookeeper ensamble uses persistent storage as well (see `spec.zookeeper.storage`)
-* The Zookeeper nodes export metrics through JMX exporter configured via `spec.zookeeper.metrics`
+* The Kafka cluster is made by 3 brokers (see `spec.kafka.replicas`).
+* There are two listeners, a "plain" (`spec.kafka.listeners.plain`) one listening on port 9092 and "tls" (`spec.kafka.listeners.tls`) one on port 9093.
+* Authentication is enabled on both "plain" and "tls". It uses SASL SCRAM-SHA-512 mechanism.
+* Authorization is enabled on the Kafka cluster. It uses the "simple" mechanism (see `spec.kafka.authorization`).
+* The Kafka brokers have the configuration set by `spec.kafka.config`.
+* The Kafka brokers uses JBOD for persistent storage with one disk (see `spec.kafka.storage`).
+* The Kafka brokers export metrics through JMX exporter configured via `spec.kafka.metrics`.
+* The Zookeeper ensamble is made by 3 nodes (see `spec.zookeeper.replicas`).
+* The Zookeeper ensamble uses persistent storage as well (see `spec.zookeeper.storage`).
+* The Zookeeper nodes export metrics through JMX exporter configured via `spec.zookeeper.metrics`.
 
 ## Topics creation
 
@@ -76,7 +81,7 @@ The scenario needs three topics to work.
 * `device-telemetry-enriched`: the topic where the Kafka Streams application writes telemetry data enriched with the devices information.
 
 The above topics are described by corresponding `KafkaTopic` resources in the `kafka/kafka-topics.yaml` file.
-When these resources are created, the Topic Operator takes care of them in ordert to create the actual corresponding topics in the Apache Kafka cluster.
+When these resources are created, the Topic Operator takes care of them in order to create the actual corresponding topics in the Apache Kafka cluster.
 
 ```shell
 oc apply -f kafka/kafka-topics.yaml
@@ -84,7 +89,7 @@ oc apply -f kafka/kafka-topics.yaml
 
 ## Users creation
 
-The scenario is made by mainly three applications interacting with the Apache Kafka cluster in order to read/write from/to topics.
+The scenario is made by different applications interacting with the Apache Kafka cluster in order to read/write from/to topics.
 In order to improve the security, setting up authentication and authorization is important in order to allow only these applications to access the related topics with the needed rights for reading/writing.
 
 * the Apache Kafka Connect cluster, using the Debezium PostgreSQL connector, has to WRITE to the `dbserver1.devices.deviceinfo` topic.
@@ -94,7 +99,7 @@ In order to improve the security, setting up authentication and authorization is
 
 For each of these applications, an Apache Kafka user is created via a corresponding `KafkaUser` resource.
 Within such a resource it is possible to describe the kind of authentication and authorization mechanism to use.
-Finally, the ACLs (Access Control List) rules descibe the rights that the user has to read/write from/to topics.
+Finally, the ACLs (Access Control List) rules describe the rights that the user has to read/write from/to topics.
 
 The `KafkaUser` resources are described in the `kafka/kafka-users.yaml` file.
 
@@ -176,7 +181,7 @@ oc expose service/grafana
 
 In order to set up the Apache Kafka and Apache Zookeeper dashboards in Grafana, it's possible to interact with the Grafana API directly.
 
-The first step is about creating a datasource; in this case it is called Prometheus.
+The first step is about creating a datasource; in this case it is called "Prometheus".
 
 ```shell
 curl -X POST http://admin:admin@$(oc get routes grafana -o jsonpath='{.status.ingress[0].host}{"\n"}')/api/datasources  -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"name":"Prometheus","isDefault":true ,"type":"prometheus","url":"http://prometheus:9090","access":"proxy","basicAuth":false}'

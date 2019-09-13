@@ -21,7 +21,7 @@ Deploy the device application by running the following command.
 oc apply -f http-device/http-device.yaml
 ```
 
-The application will emulate devices seinding telemetry data enriched with related devices information by the KStreams enricher application.
+The application will emulate simulate sending telemetry data enriched with related devices information by the Kafka Streams enricher application.
 The enriched data are written to the `device-telemetry-enriched` topic.
 
 Check that the messages are coming to that topic.
