@@ -61,6 +61,7 @@ public class CamelKafkaInfluxdb {
                                 .addField("temperature", deviceData.temperature)
                                 .addField("humidity", deviceData.humidity)
                                 .addField("manufacturer", deviceData.manufacturer)
+                                .addField("owner", deviceData.owner)
                                 .build();
 
                         exchange.getOut().setBody(point);

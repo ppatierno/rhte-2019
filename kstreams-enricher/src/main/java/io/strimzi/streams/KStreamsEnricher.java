@@ -72,6 +72,7 @@ public final class KStreamsEnricher {
         
         deviceTelemetry.join(deviceInfo, (telemetry, info) -> {
             telemetry.manufacturer = info.manufacturer;
+            telemetry.owner = info.owner;
             log.info("info = {}, telemetry = {}", info, telemetry);
             return telemetry;
         }).to("device-telemetry-enriched", Produced.with(Serdes.String(), deviceTelemetrySerdes));

@@ -110,7 +110,7 @@ oc exec -it my-cluster-kafka-0 -c kafka -- /opt/kafka/bin/kafka-console-consumer
 In another terminal, make a change to the `deviceinfo` table in the `devices` database of the PostgreSQL instance, adding a new device.
 
 ```shell
-oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "INSERT INTO deviceinfo VALUES('4', 'manufacturer-C')"
+oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "INSERT INTO deviceinfo VALUES('4', 'manufacturer-C', 'user-3')"
 ```
 
 A new event is genareted by the Debezium PostgreSQL connector and the consumer gets the message.

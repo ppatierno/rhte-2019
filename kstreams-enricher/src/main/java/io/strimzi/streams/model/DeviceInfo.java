@@ -7,14 +7,16 @@ public class DeviceInfo {
 
     public String id;
     public String manufacturer;
+    public String owner;
 
     public DeviceInfo() {
         
     }
     
-    public DeviceInfo(String id, String manufacturer) {
+    public DeviceInfo(String id, String manufacturer, String owner) {
         this.id = id;
         this.manufacturer = manufacturer;
+        this.owner = owner;
     }
 
     @Override
@@ -22,6 +24,7 @@ public class DeviceInfo {
         return "DeviceInfo(" +
                 "id = " + this.id +
                 ",manufacturer = " + this.manufacturer +
+                ",owner = " + this.owner +
                 ")";
     }
 }

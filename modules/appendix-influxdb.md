@@ -25,7 +25,7 @@ oc apply -f camel-kafka-influxdb/camel-kafka-influxdb.yaml
 To check that the incoming data are copied from the topic to the InfluxDB database, run the following SQL-like query on the database.
 
 ```shell
-oc exec -it $(oc get pods --selector=app=influxdb -o=jsonpath='{.items[0].metadata.name}') -- influx -database 'sensor' -execute 'SELECT "deviceId", "temperature", "humidity", "manufacturer" FROM "device-data"'
+oc exec -it $(oc get pods --selector=app=influxdb -o=jsonpath='{.items[0].metadata.name}') -- influx -database 'sensor' -execute 'SELECT "deviceId", "temperature", "humidity", "manufacturer", "owner" FROM "device-data"'
 ```
 
 ## Setting up Grafana
