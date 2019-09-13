@@ -71,8 +71,8 @@ public final class KStreamsEnricher {
             builder.table("dbserver1.devices.deviceinfo", Consumed.with(stringCdcKeySerdes, deviceInfoCdcSerdes));
         
         deviceTelemetry.join(deviceInfo, (telemetry, info) -> {
-            log.info("info = {}, telemetry = {}", info, telemetry);
             telemetry.manufacturer = info.manufacturer;
+            log.info("info = {}, telemetry = {}", info, telemetry);
             return telemetry;
         }).to("device-telemetry-enriched", Produced.with(Serdes.String(), deviceTelemetrySerdes));
         
