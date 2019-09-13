@@ -39,6 +39,18 @@ oc exec my-cluster-kafka-0 -c kafka -- /opt/kafka/bin/kafka-console-consumer.sh 
     --group kafka-console-consumer
 ```
 
+## CDC in action: update device information
+
+In order to see the Debezium CDC feature in place, try to change a device information.
+For example, you can change the "owner" of one of the devices running the following query.
+
+```shell
+oc exec $(oc get pods --selector=app=postgres -o=jsonpath='{.items[0].metadata.name}') -- env PGOPTIONS="--search_path=devices" psql -U postgres -c "UPDATE deviceInfo SET owner='new-user' WHERE id='1'"
+```
+
+After updating the row on the PostgreSQL database table, the related Debezium connector generates a new "update" event which is joined in real time with the data coming from the device.
+You should see that the enriched data emitted by the Kafka Streams application are now in real time updated with the new device info.
+
 ## Using real ESP8266 device
 
 Other than using the previous HTTP devices simulator, it's possible to use a real device for sending the data connecting from outside the cluster.
