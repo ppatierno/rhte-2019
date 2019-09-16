@@ -39,3 +39,8 @@ It's also available an optional module in the [appendix](modules/appendix-influx
 * 03 - [Data stream processing with Apache Kafka Stream API](modules/03-streams-api.md)
 * 04 - [Bridging HTTP to Apache Kafka](modules/04-bridging-http-kafka.md)
 * Appendix - [InfluxDB and telemetry data Grafana dashbaord](modules/appendix-influxdb.md)
+
+## Scripts
+
+Other than following the above modules step by step, it's also possible to deploy the entire demo running the provided scripts.
+> Running the scripts assumes that the cluster operator is already installed and running in the cluster.
