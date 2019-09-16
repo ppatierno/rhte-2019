@@ -8,7 +8,7 @@ sed "s/my-cluster/$CLUSTER/" $DIR/kafka/kafka-cluster.yaml > $DIR/kafka/$CLUSTER
 
 oc apply -f $DIR/kafka/$CLUSTER-kafka-cluster.yaml -n $NAMESPACE
 
-# delay for allowing cluster operator to create the first Zookeeper statefulset
+# delay for allowing cluster operator to create the Zookeeper statefulset
 sleep 5
 
 zkReplicas=$(oc get kafka $CLUSTER -o jsonpath="{.spec.zookeeper.replicas}" -n $NAMESPACE)
@@ -20,6 +20,9 @@ do
     readyReplicas=$(oc get statefulsets $CLUSTER-zookeeper -o jsonpath="{.status.readyReplicas}" -n $NAMESPACE)
 done
 echo "...Zookeeper cluster ready"
+
+# delay for allowing cluster operator to create the Kafka statefulset
+sleep 5
 
 kReplicas=$(oc get kafka $CLUSTER -o jsonpath="{.spec.kafka.replicas}" -n $NAMESPACE)
 echo "Waiting for Kafka cluster to be ready..."
@@ -37,12 +40,12 @@ echo "...entity operator ready"
 
 rm $DIR/kafka/$CLUSTER-kafka-cluster.yaml
 
-# create Kafka users
+# create Kafka topics
 sed "s/my-cluster/$CLUSTER/" $DIR/kafka/kafka-topics.yaml > $DIR/kafka/$CLUSTER-kafka-topics.yaml
 oc apply -f $DIR/kafka/$CLUSTER-kafka-topics.yaml -n $NAMESPACE
 rm $DIR/kafka/$CLUSTER-kafka-topics.yaml
 
-# create Kafka topics
+# create Kafka users
 sed "s/my-cluster/$CLUSTER/" $DIR/kafka/kafka-users.yaml > $DIR/kafka/$CLUSTER-kafka-users.yaml
 oc apply -f $DIR/kafka/$CLUSTER-kafka-users.yaml -n $NAMESPACE
 rm $DIR/kafka/$CLUSTER-kafka-users.yaml
@@ -69,7 +72,7 @@ rm $DIR/metrics/prometheus/install/prometheus-deploy.yaml
 oc apply -f $DIR/metrics/prometheus/install/strimzi-service-monitor.yaml -n $NAMESPACE
 oc apply -f $DIR/metrics/prometheus/install/alert-manager.yaml -n $NAMESPACE
 
-# delay for allowing Prometheus operator to create the Prometheus and Alert manager statefulsets
+# delay for allowing Prometheus operator to create the Alert manager statefulset
 sleep 5
 
 amReplicas=$(oc get statefulsets alertmanager-alertmanager -o jsonpath="{.spec.replicas}" -n $NAMESPACE)
@@ -82,7 +85,7 @@ do
 done
 echo "...Alert manager ready"
 
-# delay for allowing Prometheus operator to create the Prometheus and Alert manager statefulsets
+# delay for allowing Prometheus operator to create the Prometheus statefulset
 sleep 5
 
 pReplicas=$(oc get statefulsets prometheus-prometheus -o jsonpath="{.spec.replicas}" -n $NAMESPACE)

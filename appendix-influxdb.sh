@@ -4,12 +4,12 @@ NAMESPACE=${KAFKA_NAMESPACE:-rhte-demo}
 CLUSTER=${KAFKA_CLUSTER:-rhte}
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
-# deploy the InfluxDB
+# deploy the InfluxDB server
 oc apply -f $DIR/camel-kafka-influxdb/influxdb.yaml
 
-echo "Waiting for InfluxDB to be ready..."
+echo "Waiting for InfluxDB server to be ready..."
 oc rollout status deployment/influxdb -w -n $NAMESPACE
-echo "...InfluxDB ready"
+echo "...InfluxDB server ready"
 
 # deploy the Camel Kafka - InfluxDB application
 sed "s/my-cluster/$CLUSTER/" $DIR/camel-kafka-influxdb/camel-kafka-influxdb.yaml > $DIR/camel-kafka-influxdb/$CLUSTER-camel-kafka-influxdb.yaml

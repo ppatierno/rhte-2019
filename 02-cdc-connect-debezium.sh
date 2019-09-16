@@ -4,13 +4,15 @@ NAMESPACE=${KAFKA_NAMESPACE:-rhte-demo}
 CLUSTER=${KAFKA_CLUSTER:-rhte}
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
+# deploy PostgreSQL server
 oc adm policy add-scc-to-user anyuid -z postgres
 oc apply -f $DIR/kafka-connect-debezium/postgres/postgres.yaml
 
-echo "Waiting for PostgreSQL to be ready..."
+echo "Waiting for PostgreSQL server to be ready..."
 oc rollout status deployment/postgres -w -n $NAMESPACE
-echo "...PostgreSQL ready"
+echo "...PostgreSQL server ready"
 
+# deploy Kafka Connect cluster
 sed "s/my-cluster/$CLUSTER/" $DIR/kafka-connect-debezium/kafka-connect.yaml > $DIR/kafka-connect-debezium/$CLUSTER-kafka-connect.yaml
 oc apply -f $DIR/kafka-connect-debezium/$CLUSTER-kafka-connect.yaml
 
