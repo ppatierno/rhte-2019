@@ -20,6 +20,7 @@
         "links": [],
         "panels": [
             {
+                "datasource": "InfluxDB",
                 "gridPos": {
                     "h": 8,
                     "w": 12,
@@ -99,6 +100,7 @@
                 "type": "gauge"
             },
             {
+                "datasource": "InfluxDB",
                 "gridPos": {
                     "h": 8,
                     "w": 12,
@@ -178,6 +180,7 @@
                 "type": "gauge"
             },
             {
+                "datasource": "InfluxDB",
                 "aliasColors": {
                     "device-data.mean": "yellow"
                 },
@@ -299,6 +302,7 @@
                 }
             },
             {
+                "datasource": "InfluxDB",
                 "aliasColors": {},
                 "bars": false,
                 "dashLength": 10,
