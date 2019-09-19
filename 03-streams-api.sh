@@ -11,6 +11,6 @@ oc apply -f $DIR/kstreams-enricher/$CLUSTER-kstreams-enricher.yaml -n $NAMESPACE
 
 echo "Waiting for Kafka Streams application to be ready..."
 oc rollout status deployment/kstreams-enricher -w -n $NAMESPACE
-echo "...Kafka Streams ready"
+echo "...Kafka Streams application ready"
 
 rm $DIR/kstreams-enricher/$CLUSTER-kstreams-enricher.yaml
