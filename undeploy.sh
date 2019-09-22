@@ -55,3 +55,6 @@ oc delete service influxdb -n $NAMESPACE
 
 # delete Apache Camel Kafka - InfluxDB application
 oc delete deployment camel-kafka-influxdb -n $NAMESPACE
+
+# delete namespace itself
+oc delete namespace $NAMESPACE
