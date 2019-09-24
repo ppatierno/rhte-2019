@@ -5,7 +5,7 @@ CLUSTER=${KAFKA_CLUSTER:-rhte}
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 # ensure to be on the right namespace
-oc project $KAFKA_NAMESPACE 2> /dev/null || oc new-project $KAFKA_NAMESPACE
+oc project $NAMESPACE 2> /dev/null || oc new-project $NAMESPACE
 
 # deploy Kafka Streams application
 sed "s/my-cluster/$CLUSTER/" $DIR/kstreams-enricher/kstreams-enricher.yaml > $DIR/kstreams-enricher/$CLUSTER-kstreams-enricher.yaml

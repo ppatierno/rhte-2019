@@ -36,7 +36,28 @@ The operator will be installed in the `operators` namespace and will be able to 
 
 ### Manual installation
 
-Download the [latest release](https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.13.0) of the Strimzi project.
+Download the [latest release](https://github.com/strimzi/strimzi-kafka-operator/releases/tag/0.13.0) of the Strimzi project or [AMQ Streams 1.2](https://github.com/jboss-container-images/amqstreams-1-openshift-image/releases/tag/1.2.0).
+
+In the case you are using AMQ Streams 1.2, you need to change the Cluster Operator deployment first adding an `ImagePullSecrets` field providing the Secret with the credentials to access to the Red Hat Registry. 
+
+```yaml
+...
+spec:
+    serviceAccountName: strimzi-cluster-operator
+    imagePullSecrets:
+    - name: my-pull-secret
+...
+```
+
+You have also add the `STRIMZI_IMAGE_PULL_SECRETS` envaironment variable with the same Secret name.
+
+```yaml
+...
+    - name: STRIMZI_IMAGE_PULL_SECRETS
+      value: my-pull-secret
+...
+```
+
 From the extracted folder, run the following command (with a user having admin rights).
 
 ```shell

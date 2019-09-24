@@ -5,7 +5,7 @@ CLUSTER=${KAFKA_CLUSTER:-rhte}
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 # ensure to be on the right namespace
-oc project $KAFKA_NAMESPACE 2> /dev/null || oc new-project $KAFKA_NAMESPACE
+oc project $NAMESPACE 2> /dev/null || oc new-project $NAMESPACE
 
 # deploy the Kafka Bridge
 sed "s/my-cluster/$CLUSTER/" $DIR/kafka-http-bridge/kafka-bridge.yaml > $DIR/kafka-http-bridge/$CLUSTER-kafka-bridge.yaml
